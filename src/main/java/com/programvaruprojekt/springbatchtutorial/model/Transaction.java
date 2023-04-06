@@ -13,8 +13,9 @@ import java.time.LocalDate;
 public class Transaction {
 
     @Id
-    @Column(name = "id", nullable = false, unique = true, columnDefinition = "INT")
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
+    private long id;
     @Column(name = "sender", nullable = false, columnDefinition = "INT")
     private Integer sender;
     @Column(name = "receiver", nullable = false, columnDefinition = "INT")
@@ -27,8 +28,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Integer id, Integer sender, Integer receiver, LocalDate date, BigDecimal amount) {
-        this.id = id;
+    public Transaction(Integer sender, Integer receiver, LocalDate date, BigDecimal amount) {
         this.sender = sender;
         this.receiver = receiver;
         this.date = date;
@@ -74,5 +74,16 @@ public class Transaction {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
+                ", date=" + date +
+                ", amount=" + amount +
+                '}';
     }
 }

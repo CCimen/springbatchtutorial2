@@ -57,4 +57,14 @@ public class Person {
         this.DOB = DOB;
     }
 
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", DOB=" + DOB +
+                '}';
+    }
 }
