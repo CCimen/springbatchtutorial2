@@ -75,6 +75,7 @@ public class BatchConfiguration {
     public PersonItemProcessor personProcessor() {
         return new PersonItemProcessor();
     }
+
     @Bean
     public TransactionItemProcessor transactionProcessor() {
         return new TransactionItemProcessor();
@@ -93,6 +94,7 @@ public class BatchConfiguration {
                 .dataSource(dataSource)
                 .build();
     }
+
     @Bean
     public JdbcBatchItemWriter<Transaction> transactionWriter(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<Transaction>()
@@ -115,8 +117,7 @@ public class BatchConfiguration {
     public Job importUserJob(JobRepository jobRepository,
                              JobCompletionNotificationListener listener,
                              Step personStep, Step transactionStep, Step accountStep) {
-        return new JobBuilder("importUserJob")
-                .repository(jobRepository)
+        return new JobBuilder("importUserJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(personStep)
@@ -129,11 +130,11 @@ public class BatchConfiguration {
 
     @Bean
     public Step personStep(JobRepository jobRepository,
-                      PlatformTransactionManager transactionManager,
-                      JdbcBatchItemWriter<Person> personWriter) {
+                           PlatformTransactionManager transactionManager,
+                           JdbcBatchItemWriter<Person> personWriter) {
         StepBuilder stepBuilder = new StepBuilder("personStep", jobRepository);
         SimpleStepBuilder<Person, Person> simpleStepBuilder = stepBuilder
-                .<Person, Person>chunk(10)
+                .<Person, Person>chunk(10, transactionManager)
                 .reader(personReader())
                 .processor(personProcessor())
                 .writer(personWriter);
@@ -141,10 +142,11 @@ public class BatchConfiguration {
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
     }
+
     @Bean
     public Step transactionStep(JobRepository jobRepository,
-                      PlatformTransactionManager transactionManager,
-                      JdbcBatchItemWriter<Transaction> transactionWriter) {
+                                PlatformTransactionManager transactionManager,
+                                JdbcBatchItemWriter<Transaction> transactionWriter) {
         StepBuilder stepBuilder = new StepBuilder("transactionStep", jobRepository);
         SimpleStepBuilder<Transaction, Transaction> simpleStepBuilder = stepBuilder
                 .<Transaction, Transaction>chunk(10)
@@ -155,10 +157,11 @@ public class BatchConfiguration {
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
     }
+
     @Bean
     public Step accountStep(JobRepository jobRepository,
-                      PlatformTransactionManager transactionManager,
-                      JdbcBatchItemWriter<Account> accountWriter) {
+                            PlatformTransactionManager transactionManager,
+                            JdbcBatchItemWriter<Account> accountWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountStep", jobRepository);
         SimpleStepBuilder<Account, Account> simpleStepBuilder = stepBuilder
                 .<Account, Account>chunk(10)

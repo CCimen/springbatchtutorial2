@@ -8,7 +8,7 @@ import org.springframework.batch.item.ItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.model.Person;
 
 
-public class PersonItemProcessor implements ItemProcessor<Person, Person>{
+public class PersonItemProcessor implements ItemProcessor<Person, Person> {
     private static final Logger log = LoggerFactory.getLogger(PersonItemProcessor.class);
 
 

@@ -44,6 +44,7 @@ public class Account {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -51,6 +52,7 @@ public class Account {
     public int getOwner() {
         return owner;
     }
+
     public void setOwner(int owner) {
         this.owner = owner;
     }
@@ -58,6 +60,7 @@ public class Account {
     public BigDecimal getBalance() {
         return balance;
     }
+
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }

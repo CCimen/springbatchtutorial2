@@ -4,6 +4,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 import com.programvaruprojekt.springbatchtutorial.model.Person;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -22,5 +23,5 @@ public class PersonFieldSetMapper extends BeanWrapperFieldSetMapper<Person> {
         person.setDOB(LocalDate.parse(fieldSet.readString("DOB"), formatter));
         return person;
     }
-    
+
 }
