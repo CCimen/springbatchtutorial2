@@ -10,15 +10,18 @@ public class Account {
 
     @Id
     //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(
+   /* @SequenceGenerator(
             name = "account_sequence",
             sequenceName = "student_sequence",
+            initialValue = 6000000,
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "student_sequence"
     )
+
+    */
     @Column(name = "id", unique = true, columnDefinition = "INT", updatable = false)
     private int id;
     @Column(name = "owner", nullable = false, columnDefinition = "INT")

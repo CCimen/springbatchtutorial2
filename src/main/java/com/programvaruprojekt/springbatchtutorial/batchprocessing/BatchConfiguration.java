@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration {
+
     @Bean
     public FlatFileItemReader<Person> reader() {
         return new FlatFileItemReaderBuilder<Person>()

@@ -1,4 +1,3 @@
-
 package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
 import org.slf4j.Logger;
@@ -7,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
 import com.programvaruprojekt.springbatchtutorial.model.Person;
-
-
 
 
 public class PersonItemProcessor implements ItemProcessor<Person, Person>{

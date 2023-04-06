@@ -22,8 +22,5 @@ public class PersonFieldSetMapper extends BeanWrapperFieldSetMapper<Person> {
         person.setDOB(LocalDate.parse(fieldSet.readString("DOB"), formatter));
         return person;
     }
-
-
-
-
+    
 }
