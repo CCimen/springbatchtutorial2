@@ -10,7 +10,7 @@ public class Account {
 
     @Id
     //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-   /* @SequenceGenerator(
+    /* @SequenceGenerator(
             name = "account_sequence",
             sequenceName = "student_sequence",
             initialValue = 6000000,

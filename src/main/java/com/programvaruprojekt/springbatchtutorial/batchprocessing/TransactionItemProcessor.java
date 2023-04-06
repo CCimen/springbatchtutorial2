@@ -14,7 +14,7 @@ public class TransactionItemProcessor implements ItemProcessor<Transaction, Tran
 
     @Override
     public Transaction process(final Transaction transaction) throws Exception {
-        final BigDecimal amount = transaction.getAmount().divide(BigDecimal.valueOf(2));
+        final BigDecimal amount = transaction.getAmount().divide(BigDecimal.valueOf(2)); //halverar amount för test
         final Transaction transformedTransaction = new Transaction(transaction.getReceiver(), transaction.getSender(),
                 transaction.getDate(), amount);
         log.info("Converting (" + transaction + ") into (" + transformedTransaction + ")");

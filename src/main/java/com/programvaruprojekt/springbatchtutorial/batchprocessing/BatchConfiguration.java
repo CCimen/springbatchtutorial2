@@ -77,8 +77,8 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public TransactionItemProcessor transactionProcessor() {
-        return new TransactionItemProcessor();
+    public TransactionFilterProcessor transactionProcessor() {
+        return new TransactionFilterProcessor();
     }
 
     @Bean
@@ -139,7 +139,6 @@ public class BatchConfiguration {
                 .processor(personProcessor())
                 .writer(personWriter);
 
-        simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
     }
 
@@ -154,7 +153,6 @@ public class BatchConfiguration {
                 .processor(transactionProcessor())
                 .writer(transactionWriter);
 
-        simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
     }
 
@@ -164,12 +162,11 @@ public class BatchConfiguration {
                             JdbcBatchItemWriter<Account> accountWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountStep", jobRepository);
         SimpleStepBuilder<Account, Account> simpleStepBuilder = stepBuilder
-                .<Account, Account>chunk(10)
+                .<Account, Account>chunk(10, transactionManager)
                 .reader(accountReader())
                 .processor(accountProcessor())
                 .writer(accountWriter);
 
-        simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
     }
 
