@@ -15,6 +15,8 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -47,10 +49,11 @@ public class BatchConfiguration {
     public JdbcBatchItemWriter<Person> writer(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<Person>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO people (first_name, last_name) VALUES (:firstName, :lastName)")
+                .sql("INSERT INTO Persons (first_name, last_name, DOB) VALUES (:firstName, :lastName, :DOB)")
                 .dataSource(dataSource)
                 .build();
     }
+
 
     @Bean
     public Job importUserJob(JobRepository jobRepository,
