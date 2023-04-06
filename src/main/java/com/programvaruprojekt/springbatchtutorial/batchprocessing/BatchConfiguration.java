@@ -148,7 +148,7 @@ public class BatchConfiguration {
                                 JdbcBatchItemWriter<Transaction> transactionWriter) {
         StepBuilder stepBuilder = new StepBuilder("transactionStep", jobRepository);
         SimpleStepBuilder<Transaction, Transaction> simpleStepBuilder = stepBuilder
-                .<Transaction, Transaction>chunk(10)
+                .<Transaction, Transaction>chunk(10, transactionManager)
                 .reader(transactionReader())
                 .processor(transactionProcessor())
                 .writer(transactionWriter);
