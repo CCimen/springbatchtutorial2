@@ -30,16 +30,17 @@ import javax.sql.DataSource;
 public class BatchConfiguration {
 
     @Bean
-    public FlatFileItemReader<Person> reader() {
-        return new FlatFileItemReaderBuilder<Person>()
-                .name("personItemReader")
-                .resource(new ClassPathResource("sample-data.csv"))
-                .delimited()
-                .names(new String[]{"firstName", "lastName", "DOB"})
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-                    setTargetType(Person.class);
-                }})
-                .build();
+    public FlatFileItemReader<Person> personReader() {
+        FlatFileItemReader<Person> reader = new FlatFileItemReader<Person>();
+        reader.setResource(new ClassPathResource("persons_edited.csv"));
+        reader.setLineMapper(new DefaultLineMapper<Person>() {{
+            setLineTokenizer(new DelimitedLineTokenizer() {{
+                setNames(new String[]{"first_name", "last_name", "DOB"});
+                setQuoteCharacter('\''); // Add this line to set the quote character to a single quote
+            }});
+            setFieldSetMapper(new PersonFieldSetMapper());
+        }});
+        return reader;
     }
 
     @Bean
@@ -71,12 +72,21 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public PersonItemProcessor processor() {
+    public PersonItemProcessor personProcessor() {
         return new PersonItemProcessor();
+    }
+    @Bean
+    public TransactionItemProcessor transactionProcessor() {
+        return new TransactionItemProcessor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<Person> writer(DataSource dataSource) {
+    public AccountItemProcessor accountProcessor() {
+        return new AccountItemProcessor();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<Person> personWriter(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<Person>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO Persons (first_name, last_name, DOB) VALUES (:firstName, :lastName, :DOB)")
