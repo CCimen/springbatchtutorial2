@@ -1,0 +1,78 @@
+# H2 Database configuration
+server:
+  port: 9090
+
+# spring:
+#   h2:
+#     console:
+#       settings:
+#         web-allow-others: true
+
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    initalization-mode: always
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        ddl:
+          auto: create
+
+ #sql:
+   #init:
+     #mode: always
+
+  # In-memory database configuration (comment out when not needed)
+  #   datasource:
+  #     url: jdbc:h2:file:/Users/xethus/dev/SpringBatch/databasfil/testjpa;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+  # H2 Console configuration
+  h2:
+    console:
+      path: /h2-console
+
+#jpa:
+  #hibernate:
+    #ddl-auto: create
+
+# Add logging
+# logging:
+#   level:
+#     org:
+#       hibernate:
+#         SQL: DEBUG
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
+#jpa:
+  #defer-datasource-initialization: true
+#batch:
+   #jdbc:
+     #initialize-schema: always
+     #table-prefix: BATCH_
+     #schema: classpath:org/springframework/batch/core/schema.sql
+
+# Gör så att batch inte startar automatiskt
+# spring:
+#   batch:
+#     job:
+#       enabled: false
+
+application:
+  schedule:
+    cron: "0 0 0/5 * * * ?"
+  batch:
+    chunkSize: 1000

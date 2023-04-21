@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.listener;
 
 
 import com.programvaruprojekt.springbatchtutorial.model.Person;

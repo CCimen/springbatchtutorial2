@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.processors;
 
 import com.programvaruprojekt.springbatchtutorial.model.Transaction;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ public class TransactionItemProcessor implements ItemProcessor<Transaction, Tran
         final BigDecimal amount = transaction.getAmount().divide(BigDecimal.valueOf(2));
         final Transaction transformedTransaction = new Transaction(transaction.getReceiver(), transaction.getSender(),
                 transaction.getDate(), amount);
-        log.info("Converting (" + transaction + ") into (" + transformedTransaction + ")");
+        //log.info("Converting (" + transaction + ") into (" + transformedTransaction + ")");
         return transformedTransaction;
     }
 }

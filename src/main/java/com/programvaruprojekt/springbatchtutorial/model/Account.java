@@ -1,13 +1,15 @@
 package com.programvaruprojekt.springbatchtutorial.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "Accounts")
 public class Account {
-
     @Id
     //  @GeneratedValue(strategy = GenerationType.IDENTITY)
    /* @SequenceGenerator(
@@ -40,7 +42,7 @@ public class Account {
     public Account() {
     }
 
-    // Getters and setters, if not already present
+/*    // Getters and setters, if not already present
     public int getId() {
         return id;
     }
@@ -60,7 +62,7 @@ public class Account {
     }
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
-    }
+    }*/
 
     @Override
     public String toString() {

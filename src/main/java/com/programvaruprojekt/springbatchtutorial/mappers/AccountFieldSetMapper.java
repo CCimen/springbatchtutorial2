@@ -1,11 +1,12 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.mappers;
 
 import com.programvaruprojekt.springbatchtutorial.model.Account;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
-public class AccountFieldSetMapper implements FieldSetMapper<Account> {
+
+/*public class AccountFieldSetMapper implements FieldSetMapper<Account> {
 
     @Override
     public Account mapFieldSet(FieldSet fieldSet) throws BindException {
@@ -15,4 +16,4 @@ public class AccountFieldSetMapper implements FieldSetMapper<Account> {
         account.setBalance(fieldSet.readBigDecimal("balance"));
         return account;
     }
-}
+}*/

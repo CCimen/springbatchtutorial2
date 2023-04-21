@@ -1,3 +1,4 @@
+/*
 package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -22,5 +23,6 @@ public class PersonFieldSetMapper extends BeanWrapperFieldSetMapper<Person> {
         person.setDOB(LocalDate.parse(fieldSet.readString("DOB"), formatter));
         return person;
     }
-    
+
 }
+*/

@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.scheduler;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.sql.DataSource;
+
 
 @Configuration
 public class BatchSchemaInitializer {
@@ -26,3 +27,4 @@ public class BatchSchemaInitializer {
         databasePopulator.execute(dataSource);
     }
 }
+

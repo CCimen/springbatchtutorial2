@@ -1,9 +1,12 @@
 package com.programvaruprojekt.springbatchtutorial.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "Persons")
 public class Person {
@@ -28,7 +31,7 @@ public class Person {
     public Person() {
 
     }
-
+/*
     public Long getId() {
         return id;
     }
@@ -55,7 +58,7 @@ public class Person {
 
     public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
-    }
+    }*/
 
 
     @Override

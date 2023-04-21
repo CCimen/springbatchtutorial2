@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.processors;
 
 import com.programvaruprojekt.springbatchtutorial.model.Account;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ public class AccountItemProcessor implements ItemProcessor<Account, Account> {
     public Account process(final Account account) throws Exception {
         final BigDecimal balance = account.getBalance().divide(BigDecimal.valueOf(2));
         final Account transformedAccount = new Account(account.getId(), account.getOwner(), balance);
-        log.info("Converting (" + account + ") into (" + transformedAccount + ")");
+        //log.info("Converting (" + account + ") into (" + transformedAccount + ")");
         return transformedAccount;
     }
 }

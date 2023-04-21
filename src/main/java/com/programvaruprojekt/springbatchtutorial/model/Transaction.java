@@ -1,10 +1,13 @@
 package com.programvaruprojekt.springbatchtutorial.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "Transactions")
 public class Transaction {
@@ -31,6 +34,7 @@ public class Transaction {
         this.date = date;
         this.amount = amount;
     }
+/*
 
     // Getters and setters
     public long getId() {
@@ -72,6 +76,7 @@ public class Transaction {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+*/
 
     @Override
     public String toString() {

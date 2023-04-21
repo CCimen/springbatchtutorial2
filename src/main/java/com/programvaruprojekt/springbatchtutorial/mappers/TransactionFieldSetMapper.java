@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.mappers;
 
 import com.programvaruprojekt.springbatchtutorial.model.Transaction;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -7,7 +7,7 @@ import org.springframework.validation.BindException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class TransactionFieldSetMapper implements FieldSetMapper<Transaction> {
+/*public class TransactionFieldSetMapper implements FieldSetMapper<Transaction> {
 
     @Override
     public Transaction mapFieldSet(FieldSet fieldSet) throws BindException {
@@ -20,4 +20,5 @@ public class TransactionFieldSetMapper implements FieldSetMapper<Transaction> {
         return transaction;
     }
 
-}
+}*/
+

@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.processors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person>{
 
         final Person transformedPerson = new Person(firstName, lastName, person.getDOB());
 
-        log.info("Converting (" + person + ") into (" + transformedPerson + ")");
+        //log.info("Converting (" + person + ") into (" + transformedPerson + ")");
 
         return transformedPerson;
     }
