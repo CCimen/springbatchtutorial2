@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.batchprocessing;
+package com.programvaruprojekt.springbatchtutorial.listener;
 
 
 import com.programvaruprojekt.springbatchtutorial.model.Person;
@@ -28,15 +28,18 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
 
     @Override
     public void afterJob(JobExecution jobExecution) {
-        if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            log.info("!!! JOB FINISHED! Time to verify the results");
+        if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
+            log.info("!!! JOB FINISHED !!!");
 
+            /*
             jdbcTemplate.query("SELECT FIRST_NAME, LAST_NAME, DOB FROM Persons",
                     (rs, row) -> new Person(
                             rs.getString(1),
                             rs.getString(2),
                             LocalDate.parse(rs.getString(3)))
             ).forEach(person -> log.info("Found <{{}}> in the database.", person));
+
+             */
         }
     }
 }
