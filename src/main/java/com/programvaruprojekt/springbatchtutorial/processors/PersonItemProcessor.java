@@ -1,11 +1,13 @@
 package com.programvaruprojekt.springbatchtutorial.processors;
 
+import com.programvaruprojekt.springbatchtutorial.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.batch.item.ItemProcessor;
 
 import com.programvaruprojekt.springbatchtutorial.model.Person;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -23,6 +25,8 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person>{
 
         if (years < 18) {
             //TODO add logic to use another storage
+
+
             return null;
         }
         else {
