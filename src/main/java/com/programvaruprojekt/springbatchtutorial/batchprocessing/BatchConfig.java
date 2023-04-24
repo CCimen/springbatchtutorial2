@@ -44,7 +44,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
 
     public static final String PERSONS_FILE_PATH = "persons_original.csv";
     public static final String ACCOUNTS_FILE_PATH = "accounts.csv";
-    public static final String TRANSACTIONS_FILE_PATH = "transactions1_original.csv";
+    public static final String TRANSACTIONS_FILE_PATH = "transactions_10000.csv";
 
     @Value("100")
     private Integer chunkSize;
