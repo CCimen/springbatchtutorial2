@@ -16,16 +16,12 @@ import java.time.LocalDate;
 
 @Component
 public class JobCompletionNotificationListener implements JobExecutionListener {
-
     private static final Logger log = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
-
     private final JdbcTemplate jdbcTemplate;
-
     @Autowired
     public JobCompletionNotificationListener(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
     @Override
     public void afterJob(JobExecution jobExecution) {
         if(jobExecution.getStatus() == BatchStatus.COMPLETED) {

@@ -7,20 +7,20 @@ import org.springframework.batch.item.ItemProcessor;
 
 import com.programvaruprojekt.springbatchtutorial.model.Person;
 
+import java.time.LocalDate;
+
 
 public class PersonItemProcessor implements ItemProcessor<Person, Person>{
     private static final Logger log = LoggerFactory.getLogger(PersonItemProcessor.class);
 
 
     public Person process(final Person person) throws Exception {
-        final String firstName = person.getFirstName().toUpperCase();
-        final String lastName = person.getLastName().toUpperCase();
-
-        final Person transformedPerson = new Person(firstName, lastName, person.getDOB());
-
-        //log.info("Converting (" + person + ") into (" + transformedPerson + ")");
-
-        return transformedPerson;
+        // If the person is under 18, throw an exception
+        if (person.getDOB().plusYears(18).isBefore(LocalDate.now())) {
+            return new Person(person.getFirstName(), person.getLastName(), person.getDOB());
+        } else {
+            return null;
+        }
     }
 }
 

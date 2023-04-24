@@ -14,9 +14,9 @@ public class AccountItemProcessor implements ItemProcessor<Account, Account> {
 
     @Override
     public Account process(final Account account) throws Exception {
+
         final BigDecimal balance = account.getBalance().divide(BigDecimal.valueOf(2));
         final Account transformedAccount = new Account(account.getId(), account.getOwner(), balance);
-        //log.info("Converting (" + account + ") into (" + transformedAccount + ")");
         return transformedAccount;
     }
 }
