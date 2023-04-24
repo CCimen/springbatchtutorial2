@@ -31,35 +31,6 @@ public class Person {
     public Person() {
 
     }
-/*
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getDOB() {
-        return DOB;
-    }
-
-    public void setDOB(LocalDate DOB) {
-        this.DOB = DOB;
-    }*/
-
 
     @Override
     public String toString() {

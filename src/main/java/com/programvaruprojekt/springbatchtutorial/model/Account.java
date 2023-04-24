@@ -31,38 +31,15 @@ public class Account {
     @Column(name = "balance", nullable = false, columnDefinition = "DECIMAL(13,4)")
     private BigDecimal balance;
 
-    // Add this constructor
+
     public Account(int id, int owner, BigDecimal balance) {
         this.id = id;
         this.owner = owner;
         this.balance = balance;
     }
 
-    // Keep the existing no-args constructor if present
     public Account() {
     }
-
-/*    // Getters and setters, if not already present
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getOwner() {
-        return owner;
-    }
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }*/
 
     @Override
     public String toString() {
