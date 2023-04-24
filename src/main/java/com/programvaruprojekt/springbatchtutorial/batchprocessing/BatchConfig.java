@@ -48,16 +48,16 @@ public class BatchConfig extends DefaultBatchConfiguration {
     private Integer chunkSize;
 
     @Bean
-    public Job dailyJob(JobRepository jobRepository,
-                        JobCompletionNotificationListener listener,
-                        Step personStep, Step transactionStep, Step accountStep) {
-        return new JobBuilder("dailyJob", jobRepository)
+    public Job filteringJob(JobRepository jobRepository,
+                            JobCompletionNotificationListener listener,
+                            Step personStep, Step transactionStep, Step accountStep) {
+        return new JobBuilder("filteringJob", jobRepository)
                 .repository(jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(personStep)
-                .next(transactionStep)
                 .next(accountStep)
+                .next(transactionStep)
                 .end()
                 .build();
     }
@@ -111,7 +111,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         reader.setResource(new ClassPathResource(PERSONS_FILE_PATH));
         reader.setLineMapper(new DefaultLineMapper<>() {{
             setLineTokenizer(new DelimitedLineTokenizer(",") {{
-                setNames("first_name", "last_name", "DOB");
+                setNames("id", "first_name", "last_name", "DOB");
                 setQuoteCharacter('\'');
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
@@ -135,7 +135,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         reader.setResource(new ClassPathResource(TRANSACTIONS_FILE_PATH));
         reader.setLineMapper(new DefaultLineMapper<>() {{
             setLineTokenizer(new DelimitedLineTokenizer(",") {{
-                setNames("sender", "receiver", "date", "amount");
+                setNames("id", "sender", "receiver", "date", "amount");
                 setQuoteCharacter('\''); // Add this line to set the quote character to a single quote
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
@@ -191,7 +191,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         System.out.println("personWriter");
         return new JdbcBatchItemWriterBuilder<Person>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Persons (first_name, last_name, DOB) VALUES (:firstName, :lastName, :DOB)")
+                .sql("INSERT INTO Persons (id, first_name, last_name, DOB) VALUES (:id, :firstName, :lastName, :DOB)")
                 .dataSource(dataSource)
                 .build();
     }
@@ -200,7 +200,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         System.out.println("transactionWriter");
         return new JdbcBatchItemWriterBuilder<Transaction>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Transactions (sender, receiver, date, amount) VALUES (:sender, :receiver, :date, :amount)")
+                .sql("INSERT INTO Transactions (id, sender, receiver, date, amount) VALUES (:id, :sender, :receiver, :date, :amount)")
                 .dataSource(dataSource)
                 .build();
     }
@@ -214,7 +214,4 @@ public class BatchConfig extends DefaultBatchConfiguration {
                 .dataSource(dataSource)
                 .build();
     }
-
-
-
 }

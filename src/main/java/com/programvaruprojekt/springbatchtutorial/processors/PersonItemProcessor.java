@@ -8,6 +8,7 @@ import org.springframework.batch.item.ItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.model.Person;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 
 public class PersonItemProcessor implements ItemProcessor<Person, Person>{
@@ -15,11 +16,18 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person>{
 
 
     public Person process(final Person person) throws Exception {
-        // If the person is under 18, throw an exception
-        if (person.getDOB().plusYears(18).isBefore(LocalDate.now())) {
-            return new Person(person.getFirstName(), person.getLastName(), person.getDOB());
-        } else {
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate dob = person.getDOB();
+        long years = ChronoUnit.YEARS.between(dob, currentDate);
+
+        if (years < 18) {
+            //TODO add logic to use another storage
             return null;
+        }
+        else {
+            //Writes to DB
+            return person;
         }
     }
 }
