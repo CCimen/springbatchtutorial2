@@ -29,5 +29,3 @@ public class BatchSchemaInitializer {
 }
 
 
-//TODO test /Tilda
-
