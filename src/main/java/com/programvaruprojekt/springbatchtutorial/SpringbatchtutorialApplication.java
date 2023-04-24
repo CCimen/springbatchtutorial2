@@ -24,5 +24,6 @@ public class SpringbatchtutorialApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		JobExecution execution = jobLauncher.run(job, new JobParameters());
 		System.out.println("Job Status: " + execution.getStatus());
+
 	}
 }

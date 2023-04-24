@@ -12,9 +12,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -42,18 +40,18 @@ import java.util.Collections;
 @EnableBatchProcessing(dataSourceRef = "dataSource", transactionManagerRef = "transactionManager")
 public class BatchConfig extends DefaultBatchConfiguration {
 
-    public static final String PERSONS_FILE_PATH = "persons_edited_age.csv";
+    public static final String PERSONS_FILE_PATH = "persons.csv";
     public static final String ACCOUNTS_FILE_PATH = "accounts.csv";
-    public static final String TRANSACTIONS_FILE_PATH = "transactions_10000.csv";
+    public static final String TRANSACTIONS_FILE_PATH = "transactions.csv";
 
     @Value("100")
     private Integer chunkSize;
 
     @Bean
-    public Job dailyJob(JobRepository jobRepository,
-                        JobCompletionNotificationListener listener,
-                        Step personStep, Step transactionStep, Step accountStep) {
-        return new JobBuilder("dailyJob", jobRepository)
+    public Job filteringJob(JobRepository jobRepository,
+                            JobCompletionNotificationListener listener,
+                            Step personStep, Step transactionStep, Step accountStep) {
+        return new JobBuilder("filteringJob", jobRepository)
                 .repository(jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
