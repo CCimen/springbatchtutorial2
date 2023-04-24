@@ -30,7 +30,7 @@ public class TransactionItemProcessor implements ItemProcessor<Transaction, Tran
         log.info("sender: " + accountRepository.findById(Long.valueOf(transaction.getSender())));
         log.info("receiver: " + accountRepository.findById(Long.valueOf(transaction.getReceiver())));
 
-        if ((months > 18) ||
+          if ((months > 18) ||
                 (accountRepository.findById(Long.valueOf(transaction.getSender())).isEmpty()) ||
                 (accountRepository.findById(Long.valueOf(transaction.getReceiver())).isEmpty())
         ) {
