@@ -25,6 +25,5 @@ public class SpringbatchtutorialApplication implements CommandLineRunner {
 		JobExecution execution = jobLauncher.run(job, new JobParameters());
 		System.out.println("Job Status: " + execution.getStatus());
 
-		System.out.println("Tilda is sad");
 	}
 }
