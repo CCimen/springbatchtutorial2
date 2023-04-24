@@ -75,4 +75,4 @@ application:
   schedule:
     cron: "0 0 0/5 * * * ?"
   batch:
-    chunkSize: 1000
+    chunkSize: 100

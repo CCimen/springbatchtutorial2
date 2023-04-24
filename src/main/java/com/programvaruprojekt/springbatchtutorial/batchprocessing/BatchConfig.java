@@ -42,11 +42,11 @@ import java.util.Collections;
 @EnableBatchProcessing(dataSourceRef = "dataSource", transactionManagerRef = "transactionManager")
 public class BatchConfig extends DefaultBatchConfiguration {
 
-    public static final String PERSONS_FILE_PATH = "persons_edited.csv";
+    public static final String PERSONS_FILE_PATH = "persons_original.csv";
     public static final String ACCOUNTS_FILE_PATH = "accounts.csv";
-    public static final String TRANSACTIONS_FILE_PATH = "transactions1_edited.csv";
+    public static final String TRANSACTIONS_FILE_PATH = "transactions1_original.csv";
 
-    @Value("1000")
+    @Value("100")
     private Integer chunkSize;
 
     @Bean
@@ -113,7 +113,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         reader.setResource(new ClassPathResource(PERSONS_FILE_PATH));
         reader.setLineMapper(new DefaultLineMapper<>() {{
             setLineTokenizer(new DelimitedLineTokenizer(",") {{
-                setNames("first_name", "last_name", "DOB");
+                setNames("id", "first_name", "last_name", "DOB");
                 setQuoteCharacter('\'');
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
@@ -137,7 +137,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         reader.setResource(new ClassPathResource(TRANSACTIONS_FILE_PATH));
         reader.setLineMapper(new DefaultLineMapper<>() {{
             setLineTokenizer(new DelimitedLineTokenizer(",") {{
-                setNames("sender", "receiver", "date", "amount");
+                setNames("id", "sender", "receiver", "date", "amount");
                 setQuoteCharacter('\''); // Add this line to set the quote character to a single quote
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
@@ -193,7 +193,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         System.out.println("personWriter");
         return new JdbcBatchItemWriterBuilder<Person>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Persons (first_name, last_name, DOB) VALUES (:firstName, :lastName, :DOB)")
+                .sql("INSERT INTO Persons (id, first_name, last_name, DOB) VALUES (:id, :firstName, :lastName, :DOB)")
                 .dataSource(dataSource)
                 .build();
     }
@@ -202,7 +202,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         System.out.println("transactionWriter");
         return new JdbcBatchItemWriterBuilder<Transaction>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Transactions (sender, receiver, date, amount) VALUES (:sender, :receiver, :date, :amount)")
+                .sql("INSERT INTO Transactions (id, sender, receiver, date, amount) VALUES (:id, :sender, :receiver, :date, :amount)")
                 .dataSource(dataSource)
                 .build();
     }
@@ -216,7 +216,4 @@ public class BatchConfig extends DefaultBatchConfiguration {
                 .dataSource(dataSource)
                 .build();
     }
-
-
-
 }

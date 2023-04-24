@@ -22,7 +22,8 @@ public class Person {
     @Column(name = "DOB", nullable = false, columnDefinition = "DATE")
     private LocalDate DOB;
 
-    public Person(String firstName, String lastName, LocalDate DOB) {
+    public Person(long id, String firstName, String lastName, LocalDate DOB) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.DOB = DOB;

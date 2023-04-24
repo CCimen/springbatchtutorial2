@@ -26,7 +26,8 @@ public class Transaction {
     private BigDecimal amount;
 
 
-    public Transaction(Integer sender, Integer receiver, LocalDate date, BigDecimal amount) {
+    public Transaction(long id, Integer sender, Integer receiver, LocalDate date, BigDecimal amount) {
+        this.id = id;
         this.sender = sender;
         this.receiver = receiver;
         this.date = date;
