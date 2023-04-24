@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
     private long id;
     @Column(name = "sender", nullable = false, columnDefinition = "INT")

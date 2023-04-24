@@ -16,26 +16,13 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person>{
 
 
     public Person process(final Person person) throws Exception {
-        /*
-        final long id = person.getId();
-        final String firstName = person.getFirstName().toUpperCase();
-        final String lastName = person.getLastName().toUpperCase();
-
-        final Person transformedPerson = new Person(id, firstName, lastName, person.getDOB());
-
-        //log.info("Converting (" + person + ") into (" + transformedPerson + ")");
-
-        return transformedPerson;
-
-         */
 
         LocalDate currentDate = LocalDate.now();
         LocalDate dob = person.getDOB();
         long years = ChronoUnit.YEARS.between(dob, currentDate);
 
         if (years < 18) {
-            //log.info("Filtering person younger than 18 years: " + person);
-            // TODO Add logic to store the person in another place.
+            //TODO add logic to use another storage
             return null;
         }
         else {

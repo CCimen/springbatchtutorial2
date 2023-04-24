@@ -58,8 +58,8 @@ public class BatchConfig extends DefaultBatchConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(personStep)
-                .next(transactionStep)
                 .next(accountStep)
+                .next(transactionStep)
                 .end()
                 .build();
     }

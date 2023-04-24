@@ -24,15 +24,15 @@ public class Account {
     )
 
     */
-    @Column(name = "id", unique = true, columnDefinition = "INT", updatable = false)
-    private int id;
-    @Column(name = "owner", nullable = false, columnDefinition = "INT")
-    private int owner;
+    @Column(name = "id", unique = true, columnDefinition = "BIGINT", updatable = false)
+    private long id;
+    @Column(name = "owner", nullable = false, columnDefinition = "BIGINT")
+    private long owner;
     @Column(name = "balance", nullable = false, columnDefinition = "DECIMAL(13,4)")
     private BigDecimal balance;
 
 
-    public Account(int id, int owner, BigDecimal balance) {
+    public Account(long id, long owner, BigDecimal balance) {
         this.id = id;
         this.owner = owner;
         this.balance = balance;
