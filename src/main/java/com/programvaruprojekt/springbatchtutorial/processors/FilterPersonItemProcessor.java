@@ -14,14 +14,14 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class FilterPersonItemProcessor implements ItemProcessor<Person, RemovedPerson>{
+public class FilterPersonItemProcessor implements ItemProcessor<Person, Person>{
     private static final Logger log = LoggerFactory.getLogger(PersonItemProcessor.class);
 
     @Autowired
     private PersonRepository personRepository;
 
 
-    public RemovedPerson process(final Person person) throws Exception {
+    public Person process(final Person person) throws Exception {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate dob = person.getDOB();
@@ -32,10 +32,10 @@ public class FilterPersonItemProcessor implements ItemProcessor<Person, RemovedP
         }
         else {
             //Deletes from DB, writes to removed items DB
-            RemovedPerson removed = new RemovedPerson(person.getId(), person.getFirstName(), person.getLastName(), person.getDOB());
+ //           RemovedPerson removed = new RemovedPerson(person.getId(), person.getFirstName(), person.getLastName(), person.getDOB());
             personRepository.delete(person);
 
-            return removed;
+            return person;
         }
     }
 }

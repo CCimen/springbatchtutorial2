@@ -43,10 +43,11 @@ public class FilterBatchConfig extends DefaultBatchConfiguration {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
     private DataSource dataSource;
 
     @Bean
-    public Step personStep(JobRepository jobRepository,
+    public Step personFilterStep(JobRepository jobRepository,
                            PlatformTransactionManager transactionManager,
                            JdbcBatchItemWriter<Person> removedPersonWriter) {
         StepBuilder stepBuilder = new StepBuilder("personFilterStep", jobRepository);
@@ -60,7 +61,7 @@ public class FilterBatchConfig extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
     @Bean
-    public Step accountStep(JobRepository jobRepository,
+    public Step accountFilterStep(JobRepository jobRepository,
                             PlatformTransactionManager transactionManager,
                             JdbcBatchItemWriter<Account> removedAccountWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountStep", jobRepository);
@@ -74,7 +75,7 @@ public class FilterBatchConfig extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
     @Bean
-    public Step transactionStep(JobRepository jobRepository,
+    public Step transactionFilterStep(JobRepository jobRepository,
                                 PlatformTransactionManager transactionManager,
                                 JdbcBatchItemWriter<Transaction> removedTransactionWriter) {
         StepBuilder stepBuilder = new StepBuilder("transactionFilterStep", jobRepository);
@@ -153,8 +154,8 @@ public class FilterBatchConfig extends DefaultBatchConfiguration {
     }
 
     @Bean
-    public JdbcBatchItemWriter<RemovedPerson> removedPersonWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<RemovedPerson>()
+    public JdbcBatchItemWriter<Person> removedPersonWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<Person>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO RemovedPersons (id, first_name, last_name, DOB) VALUES (:id, :firstName, :lastName, :DOB)")
                 .dataSource(dataSource)

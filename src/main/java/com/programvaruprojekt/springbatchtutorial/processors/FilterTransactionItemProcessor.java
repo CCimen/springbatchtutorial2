@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class FilterTransactionItemProcessor implements ItemProcessor<Transaction, RemovedTransaction> {
+public class FilterTransactionItemProcessor implements ItemProcessor<Transaction, Transaction> {
     private static final Logger log = LoggerFactory.getLogger(FilterTransactionItemProcessor.class);
 
     @Autowired
@@ -23,7 +23,7 @@ public class FilterTransactionItemProcessor implements ItemProcessor<Transaction
     private TransactionRepository transactionRepository;
 
     @Override
-    public RemovedTransaction process(final Transaction transaction) throws Exception {
+    public Transaction process(final Transaction transaction) throws Exception {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate transactionDate = transaction.getDate();
@@ -37,10 +37,10 @@ public class FilterTransactionItemProcessor implements ItemProcessor<Transaction
         }
         else {
               //Deletes from DB, writes to removed items DB
-              RemovedTransaction removed = new RemovedTransaction(transaction.getId(), transaction.getSender(), transaction.getReceiver(), transaction.getDate(), transaction.getAmount());
+  //            RemovedTransaction removed = new RemovedTransaction(transaction.getId(), transaction.getSender(), transaction.getReceiver(), transaction.getDate(), transaction.getAmount());
               transactionRepository.delete(transaction);
 
-              return removed;
+              return transaction;
         }
 
     }
