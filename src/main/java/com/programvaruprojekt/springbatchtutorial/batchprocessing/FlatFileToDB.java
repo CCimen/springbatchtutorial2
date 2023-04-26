@@ -30,7 +30,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableBatchProcessing
-public class FlatFileToDBBatchConfig extends DefaultBatchConfiguration {
+public class FlatFileToDB extends DefaultBatchConfiguration {
 
     public static final String PERSONS_FILE_PATH = "persons.csv";
     public static final String ACCOUNTS_FILE_PATH = "accounts.csv";

@@ -24,7 +24,7 @@ import java.time.LocalDate;
 
 @Configuration
 @EnableBatchProcessing
-public class FilterBatchConfig extends DefaultBatchConfiguration {
+public class Filter extends DefaultBatchConfiguration {
 
     @Value("100")
     private Integer chunkSize;
