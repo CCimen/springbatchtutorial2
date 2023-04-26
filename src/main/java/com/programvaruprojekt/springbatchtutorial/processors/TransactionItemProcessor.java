@@ -1,5 +1,6 @@
 package com.programvaruprojekt.springbatchtutorial.processors;
 
+import com.programvaruprojekt.springbatchtutorial.model.RemovedTransaction;
 import com.programvaruprojekt.springbatchtutorial.model.Transaction;
 import com.programvaruprojekt.springbatchtutorial.repository.AccountRepository;
 import com.programvaruprojekt.springbatchtutorial.repository.PersonRepository;
@@ -14,14 +15,14 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class TransactionItemProcessor implements ItemProcessor<Transaction, Transaction> {
+public class TransactionItemProcessor implements ItemProcessor<RemovedTransaction, RemovedTransaction> {
     private static final Logger log = LoggerFactory.getLogger(TransactionItemProcessor.class);
 
     @Autowired
     private AccountRepository accountRepository;
 
     @Override
-    public Transaction process(final Transaction transaction) throws Exception {
+    public RemovedTransaction process(final RemovedTransaction transaction) throws Exception {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate transactionDate = transaction.getDate();

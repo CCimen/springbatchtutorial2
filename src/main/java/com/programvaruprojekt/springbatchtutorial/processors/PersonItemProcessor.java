@@ -1,5 +1,6 @@
 package com.programvaruprojekt.springbatchtutorial.processors;
 
+import com.programvaruprojekt.springbatchtutorial.model.RemovedPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,11 +12,11 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class PersonItemProcessor implements ItemProcessor<Person, Person>{
+public class PersonItemProcessor implements ItemProcessor<RemovedPerson, RemovedPerson> {
     private static final Logger log = LoggerFactory.getLogger(PersonItemProcessor.class);
 
 
-    public Person process(final Person person) throws Exception {
+    public RemovedPerson process(final RemovedPerson person) throws Exception {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate dob = person.getDOB();
@@ -26,7 +27,7 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person>{
             return null;
         }
         else {
-            //Writes to DB
+            //delete person from the Person table
             return person;
         }
     }
