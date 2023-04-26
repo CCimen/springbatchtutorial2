@@ -21,7 +21,7 @@ public class FilterPersonItemProcessor implements ItemProcessor<Person, RemovedP
     private PersonRepository personRepository;
 
 
-    public RemovedPerson process(final Person person) throws Exception {
+    public RemovedPerson process(final Person person) {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate dob = person.getDOB();

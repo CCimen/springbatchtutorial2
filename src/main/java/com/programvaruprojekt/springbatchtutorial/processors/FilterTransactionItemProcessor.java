@@ -1,6 +1,5 @@
 package com.programvaruprojekt.springbatchtutorial.processors;
 
-import com.programvaruprojekt.springbatchtutorial.model.RemovedAccount;
 import com.programvaruprojekt.springbatchtutorial.model.RemovedTransaction;
 import com.programvaruprojekt.springbatchtutorial.model.Transaction;
 import com.programvaruprojekt.springbatchtutorial.repository.AccountRepository;
@@ -23,15 +22,15 @@ public class FilterTransactionItemProcessor implements ItemProcessor<Transaction
     private TransactionRepository transactionRepository;
 
     @Override
-    public RemovedTransaction process(final Transaction transaction) throws Exception {
+    public RemovedTransaction process(final Transaction transaction) {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate transactionDate = transaction.getDate();
         long months = ChronoUnit.MONTHS.between(transactionDate, currentDate);
 
           if ((months <= 18) &&
-                  (accountRepository.existsById(Long.valueOf(transaction.getSender()))) &&
-                  (accountRepository.existsById(Long.valueOf(transaction.getReceiver())))
+                  (accountRepository.existsById((long) transaction.getSender())) &&
+                  (accountRepository.existsById((long) transaction.getReceiver()))
         ) {
             return null;
         }

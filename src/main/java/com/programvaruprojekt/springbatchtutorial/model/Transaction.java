@@ -16,17 +16,17 @@ public class Transaction {
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
     private long id;
-    @Column(name = "sender", nullable = false, columnDefinition = "BIGINT")
-    private long sender;
-    @Column(name = "receiver", nullable = false, columnDefinition = "BIGINT")
-    private long receiver;
+    @Column(name = "sender", nullable = false, columnDefinition = "INT")
+    private int sender;
+    @Column(name = "receiver", nullable = false, columnDefinition = "INT")
+    private int receiver;
     @Column(name = "date", nullable = false, columnDefinition = "DATE")
     private LocalDate date;
     @Column(name = "amount", nullable = false, columnDefinition = "DECIMAL(13,4)")
     private BigDecimal amount;
 
 
-    public Transaction(long id, long sender, long receiver, LocalDate date, BigDecimal amount) {
+    public Transaction(long id, int sender, int receiver, LocalDate date, BigDecimal amount) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
