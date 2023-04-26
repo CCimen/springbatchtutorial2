@@ -9,11 +9,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "Transactions")
-public class Transaction {
-
+@Table(name = "RemovedTransactions")
+public class RemovedTransaction {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
     private long id;
     @Column(name = "sender", nullable = false, columnDefinition = "BIGINT")
@@ -25,8 +24,7 @@ public class Transaction {
     @Column(name = "amount", nullable = false, columnDefinition = "DECIMAL(13,4)")
     private BigDecimal amount;
 
-
-    public Transaction(long id, long sender, long receiver, LocalDate date, BigDecimal amount) {
+    public RemovedTransaction(long id, long sender, long receiver, LocalDate date, BigDecimal amount) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -34,7 +32,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Transaction() {
+    public RemovedTransaction() {
     }
 
     @Override
