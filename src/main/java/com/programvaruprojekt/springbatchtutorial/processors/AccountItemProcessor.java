@@ -22,7 +22,7 @@ public class AccountItemProcessor implements ItemProcessor<RemovedAccount, Remov
     @Override
     public RemovedAccount process(final RemovedAccount account) throws Exception {
 
-        if(personRepository.findById(account.getOwner()).isEmpty()) {
+        if(!personRepository.existsById(account.getOwner())) {
             //TODO add logic to use another storage
 
             return null;

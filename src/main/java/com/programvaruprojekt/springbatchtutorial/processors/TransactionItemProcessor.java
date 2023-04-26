@@ -28,13 +28,11 @@ public class TransactionItemProcessor implements ItemProcessor<RemovedTransactio
         LocalDate transactionDate = transaction.getDate();
         long months = ChronoUnit.MONTHS.between(transactionDate, currentDate);
 
-        log.info("sender: " + accountRepository.findById(Long.valueOf(transaction.getSender())));
-        log.info("receiver: " + accountRepository.findById(Long.valueOf(transaction.getReceiver())));
-
-          if ((months > 18) ||
-                (accountRepository.findById(Long.valueOf(transaction.getSender())).isEmpty()) ||
-                (accountRepository.findById(Long.valueOf(transaction.getReceiver())).isEmpty())
+        if ((months > 18) ||
+                (!accountRepository.existsById(Long.valueOf(transaction.getSender()))) ||
+                (!accountRepository.existsById(Long.valueOf(transaction.getReceiver())))
         ) {
+
             //TODO add logic to use another storage
             return null;
         }
@@ -44,5 +42,7 @@ public class TransactionItemProcessor implements ItemProcessor<RemovedTransactio
         }
 
     }
-}
+
+    }
+
 

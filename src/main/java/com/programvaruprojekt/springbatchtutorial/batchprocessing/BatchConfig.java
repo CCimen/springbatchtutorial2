@@ -6,6 +6,7 @@ import com.programvaruprojekt.springbatchtutorial.model.*;
 import com.programvaruprojekt.springbatchtutorial.processors.AccountItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.PersonItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.TransactionItemProcessor;
+import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -143,7 +145,8 @@ public class BatchConfig extends DefaultBatchConfiguration {
                 .<RemovedPerson, RemovedPerson>chunk(chunkSize, transactionManager)
                 .reader(personReaderFromDatabase())
                 .processor(personProcessor())
-                .writer(personWriter);
+                .writer(personWriter)
+                .listener(loggingChunkListener());
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
