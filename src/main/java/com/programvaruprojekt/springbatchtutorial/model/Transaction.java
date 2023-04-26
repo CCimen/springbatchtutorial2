@@ -17,9 +17,9 @@ public class Transaction {
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
     private long id;
     @Column(name = "sender", nullable = false, columnDefinition = "INT")
-    private Integer sender;
+    private int sender;
     @Column(name = "receiver", nullable = false, columnDefinition = "INT")
-    private Integer receiver;
+    private int receiver;
     @Column(name = "date", nullable = false, columnDefinition = "DATE")
     private LocalDate date;
     @Column(name = "amount", nullable = false, columnDefinition = "DECIMAL(13,4)")

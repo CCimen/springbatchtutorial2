@@ -40,6 +40,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
+/*TODO: Skapa Job för datainläsning, step för datainläsning, reader+processor+writer */
+/*TODO:  Ändra writers till att skriva till removed tabellerna*/
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "dataSource", transactionManagerRef = "transactionManager")
 public class BatchConfig extends DefaultBatchConfiguration {
@@ -47,6 +49,8 @@ public class BatchConfig extends DefaultBatchConfiguration {
     public static final String PERSONS_FILE_PATH = "persons.csv";
     public static final String ACCOUNTS_FILE_PATH = "accounts.csv";
     public static final String TRANSACTIONS_FILE_PATH = "transactions.csv";
+    @Autowired
+    private DataSource dataSource;
 
     @Value("100")
     private Integer chunkSize;
