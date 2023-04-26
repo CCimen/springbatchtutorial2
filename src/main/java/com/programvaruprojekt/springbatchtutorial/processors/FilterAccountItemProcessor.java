@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.Repository;
 
 
-public class FilterAccountItemProcessor implements ItemProcessor<Account, Account> {
+public class FilterAccountItemProcessor implements ItemProcessor<Account, RemovedAccount> {
     private static final Logger log = LoggerFactory.getLogger(FilterAccountItemProcessor.class);
 
     @Autowired
@@ -21,17 +21,17 @@ public class FilterAccountItemProcessor implements ItemProcessor<Account, Accoun
     private PersonRepository personRepository;
 
     @Override
-    public Account process(final Account account) throws Exception {
+    public RemovedAccount process(final Account account) throws Exception {
 
         if(personRepository.existsById(account.getOwner())) {
             return null;
         }
         else {
             //Deletes from DB, writes to removed items DB
-       //     RemovedAccount removed = new RemovedAccount(account.getId(), account.getOwner(), account.getBalance());
+            RemovedAccount removed = new RemovedAccount(account.getId(), account.getOwner(), account.getBalance());
             accountRepository.delete(account);
 
-            return account;
+            return removed;
         }
     }
 }

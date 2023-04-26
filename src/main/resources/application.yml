@@ -17,7 +17,7 @@ spring:
     initalization-mode: always
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
+    show-sql: false #true visar hibernates sql-körningar
     properties:
       hibernate:
         format_sql: true

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class FilterTransactionItemProcessor implements ItemProcessor<Transaction, Transaction> {
+public class FilterTransactionItemProcessor implements ItemProcessor<Transaction, RemovedTransaction> {
     private static final Logger log = LoggerFactory.getLogger(FilterTransactionItemProcessor.class);
 
     @Autowired
@@ -23,24 +23,24 @@ public class FilterTransactionItemProcessor implements ItemProcessor<Transaction
     private TransactionRepository transactionRepository;
 
     @Override
-    public Transaction process(final Transaction transaction) throws Exception {
+    public RemovedTransaction process(final Transaction transaction) throws Exception {
 
         LocalDate currentDate = LocalDate.now();
         LocalDate transactionDate = transaction.getDate();
         long months = ChronoUnit.MONTHS.between(transactionDate, currentDate);
 
-          if ((months <= 18) ||
-                  (accountRepository.existsById(Long.valueOf(transaction.getSender()))) ||
+          if ((months <= 18) &&
+                  (accountRepository.existsById(Long.valueOf(transaction.getSender()))) &&
                   (accountRepository.existsById(Long.valueOf(transaction.getReceiver())))
         ) {
             return null;
         }
         else {
               //Deletes from DB, writes to removed items DB
-  //            RemovedTransaction removed = new RemovedTransaction(transaction.getId(), transaction.getSender(), transaction.getReceiver(), transaction.getDate(), transaction.getAmount());
+              RemovedTransaction removed = new RemovedTransaction(transaction.getId(), transaction.getSender(), transaction.getReceiver(), transaction.getDate(), transaction.getAmount());
               transactionRepository.delete(transaction);
 
-              return transaction;
+              return removed;
         }
 
     }

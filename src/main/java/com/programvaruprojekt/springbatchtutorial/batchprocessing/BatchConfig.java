@@ -2,12 +2,6 @@ package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
 import com.programvaruprojekt.springbatchtutorial.listener.JobCompletionNotificationListener;
 import com.programvaruprojekt.springbatchtutorial.listener.LoggingChunkListener;
-import com.programvaruprojekt.springbatchtutorial.model.Account;
-import com.programvaruprojekt.springbatchtutorial.model.Person;
-import com.programvaruprojekt.springbatchtutorial.model.Transaction;
-import com.programvaruprojekt.springbatchtutorial.processors.AccountItemProcessor;
-import com.programvaruprojekt.springbatchtutorial.processors.PersonItemProcessor;
-import com.programvaruprojekt.springbatchtutorial.processors.TransactionItemProcessor;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -16,29 +10,11 @@ import org.springframework.batch.core.configuration.support.DefaultBatchConfigur
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.SimpleStepBuilder;
-import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
 
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.sql.DataSource;
-import java.beans.PropertyEditorSupport;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "dataSource", transactionManagerRef = "transactionManager")
@@ -57,7 +33,6 @@ public class BatchConfig extends DefaultBatchConfiguration {
     }
 
     @Bean
-    @Primary
     public Job loadJob(JobRepository jobRepository,
                        JobCompletionNotificationListener listener,
                        Step personLoadStep, Step transactionLoadStep, Step accountLoadStep) {
@@ -73,9 +48,9 @@ public class BatchConfig extends DefaultBatchConfiguration {
     }
 
     @Bean
-    public Job filteringJob(JobRepository jobRepository,
-                            JobCompletionNotificationListener listener,
-                            Step personFilterStep, Step transactionFilterStep, Step accountFilterStep) {
+    public Job filterJob(JobRepository jobRepository,
+                         JobCompletionNotificationListener listener,
+                         Step personFilterStep, Step transactionFilterStep, Step accountFilterStep) {
         return new JobBuilder("filteringJob", jobRepository)
                 .repository(jobRepository)
                 .incrementer(new RunIdIncrementer())
