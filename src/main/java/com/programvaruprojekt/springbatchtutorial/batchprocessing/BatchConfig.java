@@ -27,10 +27,6 @@ import javax.sql.DataSource;
 public class BatchConfig extends DefaultBatchConfiguration {
 
 
-    @Bean
-    public ChunkListener loggingChunkListener() {
-        return new LoggingChunkListener();
-    }
 
     @Bean
     public Job loadJob(JobRepository jobRepository,

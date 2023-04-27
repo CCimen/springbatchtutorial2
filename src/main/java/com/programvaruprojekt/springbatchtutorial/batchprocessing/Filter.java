@@ -1,10 +1,12 @@
 package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
+import com.programvaruprojekt.springbatchtutorial.listener.LoggingChunkListener;
 import com.programvaruprojekt.springbatchtutorial.model.*;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterAccountItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterPersonItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterTransactionItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.repository.*;
+import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
@@ -28,9 +30,13 @@ import java.time.LocalDate;
 @EnableBatchProcessing
 public class Filter extends DefaultBatchConfiguration {
 
-    @Value("100")
+    @Value("1000")
     private Integer chunkSize;
 
+    @Bean
+    public ChunkListener loggingChunkListener() {
+        return new LoggingChunkListener();
+    }
 
     @Bean
     public Step personFilterStep(DataSource dataSource, JobRepository jobRepository,
@@ -41,7 +47,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .<Person, RemovedPerson>chunk(chunkSize, transactionManager)
                 .reader(personReaderFromDatabase(dataSource))
                 .processor(personFilterProcessor())
-                .writer(removedPersonWriter);
+                .writer(removedPersonWriter)
+                .listener(loggingChunkListener());
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
@@ -57,7 +64,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .<Account, RemovedAccount>chunk(chunkSize, transactionManager)
                 .reader(accountReaderFromDatabase(dataSource))
                 .processor(accountFilterProcessor())
-                .writer(removedAccountWriter);
+                .writer(removedAccountWriter)
+                .listener(loggingChunkListener());
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
@@ -73,7 +81,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .<Transaction, RemovedTransaction>chunk(chunkSize, transactionManager)
                 .reader(transactionReaderFromDatabase(dataSource))
                 .processor(transactionFilterProcessor())
-                .writer(removedTransactionWriter);
+                .writer(removedTransactionWriter)
+                .listener(loggingChunkListener());
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
