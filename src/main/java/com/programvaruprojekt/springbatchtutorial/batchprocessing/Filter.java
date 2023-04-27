@@ -1,11 +1,23 @@
 package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
+
+import org.aspectj.apache.bcel.Repository;
+import org.springframework.batch.item.database.*;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import java.util.Properties;
+
 import com.programvaruprojekt.springbatchtutorial.listener.LoggingChunkListener;
 import com.programvaruprojekt.springbatchtutorial.model.*;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterAccountItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterPersonItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterTransactionItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.repository.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -14,29 +26,35 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
+import java.util.Properties;
 
 @Configuration
 @EnableBatchProcessing
 public class Filter extends DefaultBatchConfiguration {
 
-    @Value("1000")
+    @Value("100")
     private Integer chunkSize;
-
     @Bean
     public ChunkListener loggingChunkListener() {
         return new LoggingChunkListener();
     }
+
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+
 
     @Bean
     public Step personFilterStep(DataSource dataSource, JobRepository jobRepository,
@@ -45,7 +63,7 @@ public class Filter extends DefaultBatchConfiguration {
         StepBuilder stepBuilder = new StepBuilder("personFilterStep", jobRepository);
         SimpleStepBuilder<Person, RemovedPerson> simpleStepBuilder = stepBuilder
                 .<Person, RemovedPerson>chunk(chunkSize, transactionManager)
-                .reader(personReaderFromDatabase(dataSource))
+                .reader(personReaderFromDatabase())
                 .processor(personFilterProcessor())
                 .writer(removedPersonWriter)
                 .listener(loggingChunkListener());
@@ -56,13 +74,13 @@ public class Filter extends DefaultBatchConfiguration {
 
 
     @Bean
-    public Step accountFilterStep(DataSource dataSource, JobRepository jobRepository,
+    public Step accountFilterStep(JobRepository jobRepository,
                             PlatformTransactionManager transactionManager,
                                   RepositoryItemWriter<RemovedAccount> removedAccountWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountStep", jobRepository);
         SimpleStepBuilder<Account, RemovedAccount> simpleStepBuilder = stepBuilder
                 .<Account, RemovedAccount>chunk(chunkSize, transactionManager)
-                .reader(accountReaderFromDatabase(dataSource))
+                .reader(accountReaderFromDatabase())
                 .processor(accountFilterProcessor())
                 .writer(removedAccountWriter)
                 .listener(loggingChunkListener());
@@ -79,7 +97,7 @@ public class Filter extends DefaultBatchConfiguration {
         StepBuilder stepBuilder = new StepBuilder("transactionFilterStep", jobRepository);
         SimpleStepBuilder<Transaction, RemovedTransaction> simpleStepBuilder = stepBuilder
                 .<Transaction, RemovedTransaction>chunk(chunkSize, transactionManager)
-                .reader(transactionReaderFromDatabase(dataSource))
+                .reader(transactionReaderFromDatabase())
                 .processor(transactionFilterProcessor())
                 .writer(removedTransactionWriter)
                 .listener(loggingChunkListener());
@@ -88,55 +106,57 @@ public class Filter extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
 
-
-
     @Bean
-    public JdbcCursorItemReader<Person> personReaderFromDatabase(DataSource dataSource) {
-        JdbcCursorItemReader<Person> reader = new JdbcCursorItemReader<>();
-        reader.setDataSource(dataSource);
-        reader.setSql("SELECT id, first_name, last_name, DOB FROM Persons");
-        reader.setRowMapper((resultSet, rowNum) -> {
-            Person person = new Person();
-            person.setId(resultSet.getLong("id"));
-            person.setFirstName(resultSet.getString("first_name"));
-            person.setLastName(resultSet.getString("last_name"));
-            person.setDOB(resultSet.getObject("DOB", LocalDate.class));
-            return person;
-        });
-        return reader;
-    }
-
-
-    @Bean
-    public JdbcCursorItemReader<Account> accountReaderFromDatabase(DataSource dataSource) {
-        JdbcCursorItemReader<Account> reader = new JdbcCursorItemReader<>();
-        reader.setDataSource(dataSource);
-        reader.setSql("SELECT id, owner, balance FROM Accounts");
-        reader.setRowMapper((resultSet, rowNum) -> {
-            Account account = new Account();
-            account.setId(resultSet.getLong("id"));
-            account.setOwner(resultSet.getInt("owner"));
-            account.setBalance(resultSet.getBigDecimal("balance"));
-            return account;
-        });
-        return reader;
+    public JpaCursorItemReader<Person> personReaderFromDatabase() {
+        return new JpaCursorItemReaderBuilder<Person>()
+                .name("personReaderFromDatabase")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("SELECT p FROM Person p ORDER BY p.id ASC")
+                .build();
     }
     @Bean
-    public JdbcCursorItemReader<Transaction> transactionReaderFromDatabase(DataSource dataSource) {
-        JdbcCursorItemReader<Transaction> reader = new JdbcCursorItemReader<>();
-        reader.setDataSource(dataSource);
-        reader.setSql("SELECT id, sender, receiver, date, amount FROM Transactions");
-        reader.setRowMapper((resultSet, rowNum) -> {
-            Transaction transaction = new Transaction();
-            transaction.setId(resultSet.getLong("id"));
-            transaction.setSender(resultSet.getInt("sender"));
-            transaction.setReceiver(resultSet.getInt("receiver"));
-            transaction.setDate(resultSet.getObject("date", LocalDate.class));
-            transaction.setAmount(resultSet.getBigDecimal("amount"));
-            return transaction;
-        });
+    public JpaCursorItemReader<Account> accountReaderFromDatabase() {
+        return new JpaCursorItemReaderBuilder<Account>()
+                .name("accountReaderFromDatabase")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("SELECT a FROM Account a ORDER BY a.id ASC")
+                .build();
+    }
+    @Bean
+    public JpaCursorItemReader<Transaction> transactionReaderFromDatabase() {
+        return new JpaCursorItemReaderBuilder<Transaction>()
+                .name("transactionReaderFromDatabase")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("SELECT t FROM Transaction t ORDER BY t.id ASC")
+                .build();
+    }
+
+        /* //TODO: transaction only filter every second page
+    @Bean
+    public JpaPagingItemReader<Person> personReaderFromDatabase() {
+        JpaPagingItemReader<Person> reader = new JpaPagingItemReader<>();
+        reader.setEntityManagerFactory(entityManagerFactory);
+        reader.setQueryString("SELECT p FROM Person p");
+        reader.setPageSize(10);
         return reader;
     }
+    @Bean
+    public JpaPagingItemReader<Account> accountReaderFromDatabase() {
+        JpaPagingItemReader<Account> reader = new JpaPagingItemReader<>();
+        reader.setEntityManagerFactory(entityManagerFactory);
+        reader.setQueryString("SELECT a FROM Account a");
+        reader.setPageSize(10);
+        return reader;
+    }
+        @Bean
+    public JpaPagingItemReader<Transaction> transactionReaderFromDatabase() {
+        JpaPagingItemReader<Transaction> reader = new JpaPagingItemReader<>();
+        reader.setEntityManagerFactory(entityManagerFactory);
+        reader.setQueryString("SELECT t FROM Transaction t");
+        reader.setPageSize(100);
+        return reader;
+    }
+     */
 
     @Bean
     public FilterPersonItemProcessor personFilterProcessor() {
