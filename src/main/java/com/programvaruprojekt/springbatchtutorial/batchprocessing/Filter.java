@@ -1,23 +1,14 @@
 package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
-
-import org.aspectj.apache.bcel.Repository;
-import org.springframework.batch.item.database.*;
-import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import java.util.Properties;
-
 import com.programvaruprojekt.springbatchtutorial.listener.LoggingChunkListener;
 import com.programvaruprojekt.springbatchtutorial.model.*;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterAccountItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterPersonItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterTransactionItemProcessor;
-import com.programvaruprojekt.springbatchtutorial.repository.*;
-import jakarta.persistence.EntityManager;
+import com.programvaruprojekt.springbatchtutorial.repository.RemovedAccountRepository;
+import com.programvaruprojekt.springbatchtutorial.repository.RemovedPersonRepository;
+import com.programvaruprojekt.springbatchtutorial.repository.RemovedTransactionRepository;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -25,21 +16,17 @@ import org.springframework.batch.core.configuration.support.DefaultBatchConfigur
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.batch.item.database.JpaCursorItemReader;
+import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-import javax.xml.crypto.Data;
-import java.time.LocalDate;
-import java.util.Properties;
 
 @Configuration
 @EnableBatchProcessing
@@ -47,19 +34,19 @@ public class Filter extends DefaultBatchConfiguration {
 
     @Value("100")
     private Integer chunkSize;
+
+    @Autowired     //TODO: shouldn't work but does.. How to fix entityManagerFactory?
+    private EntityManagerFactory entityManagerFactory;
+
     @Bean
     public ChunkListener loggingChunkListener() {
         return new LoggingChunkListener();
     }
 
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
-
-
     @Bean
-    public Step personFilterStep(DataSource dataSource, JobRepository jobRepository,
+    public Step personFilterStep(JobRepository jobRepository,
                            PlatformTransactionManager transactionManager,
-                           RepositoryItemWriter<RemovedPerson> removedPersonWriter) {
+                           ItemWriter<RemovedPerson> removedPersonWriter) {
         StepBuilder stepBuilder = new StepBuilder("personFilterStep", jobRepository);
         SimpleStepBuilder<Person, RemovedPerson> simpleStepBuilder = stepBuilder
                 .<Person, RemovedPerson>chunk(chunkSize, transactionManager)
@@ -72,11 +59,10 @@ public class Filter extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
 
-
     @Bean
     public Step accountFilterStep(JobRepository jobRepository,
                             PlatformTransactionManager transactionManager,
-                                  RepositoryItemWriter<RemovedAccount> removedAccountWriter) {
+                                  ItemWriter<RemovedAccount> removedAccountWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountStep", jobRepository);
         SimpleStepBuilder<Account, RemovedAccount> simpleStepBuilder = stepBuilder
                 .<Account, RemovedAccount>chunk(chunkSize, transactionManager)
@@ -89,11 +75,10 @@ public class Filter extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
 
-
     @Bean
-    public Step transactionFilterStep(DataSource dataSource, JobRepository jobRepository,
+    public Step transactionFilterStep(JobRepository jobRepository,
                                 PlatformTransactionManager transactionManager,
-                                RepositoryItemWriter<RemovedTransaction> removedTransactionWriter) {
+                                ItemWriter<RemovedTransaction> removedTransactionWriter) {
         StepBuilder stepBuilder = new StepBuilder("transactionFilterStep", jobRepository);
         SimpleStepBuilder<Transaction, RemovedTransaction> simpleStepBuilder = stepBuilder
                 .<Transaction, RemovedTransaction>chunk(chunkSize, transactionManager)
@@ -106,6 +91,7 @@ public class Filter extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
 
+    /* Reads from tables */
     @Bean
     public JpaCursorItemReader<Person> personReaderFromDatabase() {
         return new JpaCursorItemReaderBuilder<Person>()
@@ -131,7 +117,42 @@ public class Filter extends DefaultBatchConfiguration {
                 .build();
     }
 
-        /* //TODO: transaction only filter every second page
+    /* Filtering data */
+    @Bean
+    public FilterPersonItemProcessor personFilterProcessor() {
+        return new FilterPersonItemProcessor();
+    }
+    @Bean
+    public FilterTransactionItemProcessor transactionFilterProcessor() {
+        return new FilterTransactionItemProcessor();
+    }
+    @Bean
+    public FilterAccountItemProcessor accountFilterProcessor() {
+        return new FilterAccountItemProcessor();
+    }
+
+    /* Writes to Removed Tables */
+    @Bean
+    public JpaItemWriter<RemovedPerson> removedPersonWriter(EntityManagerFactory entityManagerFactory) {
+        JpaItemWriter<RemovedPerson> writer = new JpaItemWriter<>();
+        writer.setEntityManagerFactory(entityManagerFactory);
+        return writer;
+    }
+    @Bean
+    public JpaItemWriter<RemovedAccount> removedAccountWriter(EntityManagerFactory entityManagerFactory) {
+        JpaItemWriter<RemovedAccount> writer = new JpaItemWriter<>();
+        writer.setEntityManagerFactory(entityManagerFactory);
+        return writer;
+    }
+    @Bean
+    public JpaItemWriter<RemovedTransaction> removedTransactionWriter(EntityManagerFactory entityManagerFactory) {
+        JpaItemWriter<RemovedTransaction> writer = new JpaItemWriter<>();
+        writer.setEntityManagerFactory(entityManagerFactory);
+        return writer;
+    }
+
+    /*
+    //Readers: Transaction only filter every second page
     @Bean
     public JpaPagingItemReader<Person> personReaderFromDatabase() {
         JpaPagingItemReader<Person> reader = new JpaPagingItemReader<>();
@@ -156,23 +177,10 @@ public class Filter extends DefaultBatchConfiguration {
         reader.setPageSize(100);
         return reader;
     }
-     */
+    */
 
-    @Bean
-    public FilterPersonItemProcessor personFilterProcessor() {
-        return new FilterPersonItemProcessor();
-    }
-
-    @Bean
-    public FilterTransactionItemProcessor transactionFilterProcessor() {
-        return new FilterTransactionItemProcessor();
-    }
-
-    @Bean
-    public FilterAccountItemProcessor accountFilterProcessor() {
-        return new FilterAccountItemProcessor();
-    }
-
+    /*
+    // Works, just different kind of writer
     @Bean
     public RepositoryItemWriter<RemovedPerson> removedPersonWriter (RemovedPersonRepository removedPersonRepository) {
         RepositoryItemWriter<RemovedPerson> writer = new RepositoryItemWriter<>();
@@ -194,5 +202,6 @@ public class Filter extends DefaultBatchConfiguration {
         writer.setMethodName("save");
         return writer;
     }
+    */
 
 }
