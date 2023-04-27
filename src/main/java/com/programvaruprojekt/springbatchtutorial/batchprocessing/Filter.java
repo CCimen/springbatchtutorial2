@@ -5,9 +5,6 @@ import com.programvaruprojekt.springbatchtutorial.model.*;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterAccountItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterPersonItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterTransactionItemProcessor;
-import com.programvaruprojekt.springbatchtutorial.repository.RemovedAccountRepository;
-import com.programvaruprojekt.springbatchtutorial.repository.RemovedPersonRepository;
-import com.programvaruprojekt.springbatchtutorial.repository.RemovedTransactionRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Step;
@@ -17,7 +14,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
@@ -25,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
@@ -53,7 +50,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .reader(personReaderFromDatabase())
                 .processor(personFilterProcessor())
                 .writer(removedPersonWriter)
-                .listener(loggingChunkListener());
+               // .listener(loggingChunkListener())
+                ;
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
@@ -69,7 +67,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .reader(accountReaderFromDatabase())
                 .processor(accountFilterProcessor())
                 .writer(removedAccountWriter)
-                .listener(loggingChunkListener());
+              //  .listener(loggingChunkListener())
+                ;
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
@@ -85,7 +84,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .reader(transactionReaderFromDatabase())
                 .processor(transactionFilterProcessor())
                 .writer(removedTransactionWriter)
-                .listener(loggingChunkListener());
+             //   .listener(loggingChunkListener())
+                ;
 
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();

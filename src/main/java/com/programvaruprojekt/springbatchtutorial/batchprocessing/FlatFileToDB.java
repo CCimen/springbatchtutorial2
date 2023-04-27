@@ -6,7 +6,6 @@ import com.programvaruprojekt.springbatchtutorial.model.Transaction;
 import com.programvaruprojekt.springbatchtutorial.repository.AccountRepository;
 import com.programvaruprojekt.springbatchtutorial.repository.PersonRepository;
 import com.programvaruprojekt.springbatchtutorial.repository.TransactionRepository;
-import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
@@ -14,10 +13,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -26,12 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -41,9 +32,9 @@ import java.util.Collections;
 @EnableBatchProcessing
 public class FlatFileToDB extends DefaultBatchConfiguration {
 
-    public static final String PERSONS_FILE_PATH = "persons.csv";
-    public static final String ACCOUNTS_FILE_PATH = "accounts.csv";
-    public static final String TRANSACTIONS_FILE_PATH = "transactions.csv";
+    public static final String PERSONS_FILE_PATH = "persons_10k.csv";
+    public static final String ACCOUNTS_FILE_PATH = "accounts_20k.csv";
+    public static final String TRANSACTIONS_FILE_PATH = "transactions_100k.csv";
 
     @Value("100")
     private Integer chunkSize;
