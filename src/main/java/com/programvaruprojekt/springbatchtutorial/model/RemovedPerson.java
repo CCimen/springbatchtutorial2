@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public class RemovedPerson {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
     private long id;
 

@@ -15,19 +15,6 @@ import java.math.BigDecimal;
 @Table(name = "RemovedAccounts")
 public class RemovedAccount {
     @Id
-    //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-   /* @SequenceGenerator(
-            name = "account_sequence",
-            sequenceName = "student_sequence",
-            initialValue = 6000000,
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
-    )
-
-    */
     @Column(name = "id", unique = true, columnDefinition = "BIGINT", updatable = false)
     private long id;
     @Column(name = "owner", nullable = false, columnDefinition = "BIGINT")

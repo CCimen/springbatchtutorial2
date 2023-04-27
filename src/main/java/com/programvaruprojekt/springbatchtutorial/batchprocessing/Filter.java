@@ -4,12 +4,14 @@ import com.programvaruprojekt.springbatchtutorial.model.*;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterAccountItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterPersonItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.processors.FilterTransactionItemProcessor;
+import com.programvaruprojekt.springbatchtutorial.repository.*;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
@@ -33,7 +35,7 @@ public class Filter extends DefaultBatchConfiguration {
     @Bean
     public Step personFilterStep(DataSource dataSource, JobRepository jobRepository,
                            PlatformTransactionManager transactionManager,
-                           JdbcBatchItemWriter<RemovedPerson> removedPersonWriter) {
+                           RepositoryItemWriter<RemovedPerson> removedPersonWriter) {
         StepBuilder stepBuilder = new StepBuilder("personFilterStep", jobRepository);
         SimpleStepBuilder<Person, RemovedPerson> simpleStepBuilder = stepBuilder
                 .<Person, RemovedPerson>chunk(chunkSize, transactionManager)
@@ -49,7 +51,7 @@ public class Filter extends DefaultBatchConfiguration {
     @Bean
     public Step accountFilterStep(DataSource dataSource, JobRepository jobRepository,
                             PlatformTransactionManager transactionManager,
-                            JdbcBatchItemWriter<RemovedAccount> removedAccountWriter) {
+                                  RepositoryItemWriter<RemovedAccount> removedAccountWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountStep", jobRepository);
         SimpleStepBuilder<Account, RemovedAccount> simpleStepBuilder = stepBuilder
                 .<Account, RemovedAccount>chunk(chunkSize, transactionManager)
@@ -60,10 +62,12 @@ public class Filter extends DefaultBatchConfiguration {
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
     }
+
+
     @Bean
     public Step transactionFilterStep(DataSource dataSource, JobRepository jobRepository,
                                 PlatformTransactionManager transactionManager,
-                                JdbcBatchItemWriter<RemovedTransaction> removedTransactionWriter) {
+                                RepositoryItemWriter<RemovedTransaction> removedTransactionWriter) {
         StepBuilder stepBuilder = new StepBuilder("transactionFilterStep", jobRepository);
         SimpleStepBuilder<Transaction, RemovedTransaction> simpleStepBuilder = stepBuilder
                 .<Transaction, RemovedTransaction>chunk(chunkSize, transactionManager)
@@ -92,6 +96,7 @@ public class Filter extends DefaultBatchConfiguration {
         });
         return reader;
     }
+
 
     @Bean
     public JdbcCursorItemReader<Account> accountReaderFromDatabase(DataSource dataSource) {
@@ -140,29 +145,25 @@ public class Filter extends DefaultBatchConfiguration {
     }
 
     @Bean
-    public JdbcBatchItemWriter<RemovedPerson> removedPersonWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<RemovedPerson>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Removed_Persons (id, first_name, last_name, DOB) VALUES (:id, :firstName, :lastName, :DOB)")
-                .dataSource(dataSource)
-                .build();
+    public RepositoryItemWriter<RemovedPerson> removedPersonWriter (RemovedPersonRepository removedPersonRepository) {
+        RepositoryItemWriter<RemovedPerson> writer = new RepositoryItemWriter<>();
+        writer.setRepository(removedPersonRepository);
+        writer.setMethodName("save");
+        return writer;
     }
     @Bean
-    public JdbcBatchItemWriter<RemovedTransaction> removedTransactionWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<RemovedTransaction>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Removed_Transactions (id, sender, receiver, date, amount) VALUES (:id, :sender, :receiver, :date, :amount)")
-                .dataSource(dataSource)
-                .build();
+    public RepositoryItemWriter<RemovedAccount> removedAccountWriter (RemovedAccountRepository removedAccountRepository) {
+        RepositoryItemWriter<RemovedAccount> writer = new RepositoryItemWriter<>();
+        writer.setRepository(removedAccountRepository);
+        writer.setMethodName("save");
+        return writer;
     }
-
     @Bean
-    public JdbcBatchItemWriter<RemovedAccount> removedAccountWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<RemovedAccount>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Removed_Accounts (id, owner, balance) VALUES (:id, :owner, :balance)")
-                .dataSource(dataSource)
-                .build();
+    public RepositoryItemWriter<RemovedTransaction> removedTransactionWriter(RemovedTransactionRepository removedTransactionRepository) {
+        RepositoryItemWriter<RemovedTransaction> writer = new RepositoryItemWriter<>();
+        writer.setRepository(removedTransactionRepository);
+        writer.setMethodName("save");
+        return writer;
     }
 
 }

@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Table(name = "RemovedTransactions")
 public class RemovedTransaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true, columnDefinition = "BIGINT")
     private long id;
     @Column(name = "sender", nullable = false, columnDefinition = "INT")

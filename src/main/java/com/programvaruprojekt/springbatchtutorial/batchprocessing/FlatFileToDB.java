@@ -3,14 +3,20 @@ package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 import com.programvaruprojekt.springbatchtutorial.model.Account;
 import com.programvaruprojekt.springbatchtutorial.model.Person;
 import com.programvaruprojekt.springbatchtutorial.model.Transaction;
+import com.programvaruprojekt.springbatchtutorial.repository.AccountRepository;
+import com.programvaruprojekt.springbatchtutorial.repository.PersonRepository;
+import com.programvaruprojekt.springbatchtutorial.repository.TransactionRepository;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -20,6 +26,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -43,7 +52,7 @@ public class FlatFileToDB extends DefaultBatchConfiguration {
     @Bean
     public Step personLoadStep(JobRepository jobRepository,
                            PlatformTransactionManager transactionManager,
-                           JdbcBatchItemWriter<Person> personLoadWriter) {
+                           RepositoryItemWriter<Person> personLoadWriter) {
         StepBuilder stepBuilder = new StepBuilder("personLoadStep", jobRepository);
         SimpleStepBuilder<Person, Person> simpleStepBuilder = stepBuilder
                 .<Person, Person>chunk(chunkSize, transactionManager)
@@ -56,7 +65,7 @@ public class FlatFileToDB extends DefaultBatchConfiguration {
     @Bean
     public Step accountLoadStep(JobRepository jobRepository,
                             PlatformTransactionManager transactionManager,
-                            JdbcBatchItemWriter<Account> accountLoadWriter) {
+                            RepositoryItemWriter<Account> accountLoadWriter) {
         StepBuilder stepBuilder = new StepBuilder("accountLoadStep", jobRepository);
         SimpleStepBuilder<Account, Account> simpleStepBuilder = stepBuilder
                 .<Account, Account>chunk(chunkSize, transactionManager)
@@ -69,7 +78,7 @@ public class FlatFileToDB extends DefaultBatchConfiguration {
     @Bean
     public Step transactionLoadStep(JobRepository jobRepository,
                                     PlatformTransactionManager transactionManager,
-                                    JdbcBatchItemWriter<Transaction> transactionLoadWriter) {
+                                    RepositoryItemWriter<Transaction> transactionLoadWriter) {
         StepBuilder stepBuilder = new StepBuilder("transactionLoadStep", jobRepository);
         SimpleStepBuilder<Transaction, Transaction> simpleStepBuilder = stepBuilder
                 .<Transaction, Transaction>chunk(chunkSize, transactionManager)
@@ -140,29 +149,28 @@ public class FlatFileToDB extends DefaultBatchConfiguration {
         return reader;
     }
 
+
+
     @Bean
-    public JdbcBatchItemWriter<Person> personLoadWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Person>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Persons (id, first_name, last_name, DOB) VALUES (:id, :firstName, :lastName, :DOB)")
-                .dataSource(dataSource)
-                .build();
+    public RepositoryItemWriter<Person> personLoadWriter(PersonRepository personRepository) {
+        RepositoryItemWriter<Person> writer = new RepositoryItemWriter<>();
+        writer.setRepository(personRepository);
+        writer.setMethodName("save");
+        return writer;
     }
     @Bean
-    public JdbcBatchItemWriter<Account> accountLoadWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Account>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Accounts (id, owner, balance) VALUES (:id, :owner, :balance)")
-                .dataSource(dataSource)
-                .build();
+    public RepositoryItemWriter<Account> accountLoadWriter(AccountRepository accountRepository) {
+        RepositoryItemWriter<Account> writer = new RepositoryItemWriter<>();
+        writer.setRepository(accountRepository);
+        writer.setMethodName("save");
+        return writer;
     }
     @Bean
-    public JdbcBatchItemWriter<Transaction> transactionLoadWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Transaction>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO Transactions (id, sender, receiver, date, amount) VALUES (:id, :sender, :receiver, :date, :amount)")
-                .dataSource(dataSource)
-                .build();
+    public RepositoryItemWriter<Transaction> transactionLoadWriter(TransactionRepository transactionRepository) {
+        RepositoryItemWriter<Transaction> writer = new RepositoryItemWriter<>();
+        writer.setRepository(transactionRepository);
+        writer.setMethodName("save");
+        return writer;
     }
 
 }
