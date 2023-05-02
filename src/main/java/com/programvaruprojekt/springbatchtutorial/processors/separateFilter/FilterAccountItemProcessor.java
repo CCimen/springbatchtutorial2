@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.processors;
+package com.programvaruprojekt.springbatchtutorial.processors.separateFilter;
 
 import com.programvaruprojekt.springbatchtutorial.model.Account;
 import com.programvaruprojekt.springbatchtutorial.model.RemovedAccount;

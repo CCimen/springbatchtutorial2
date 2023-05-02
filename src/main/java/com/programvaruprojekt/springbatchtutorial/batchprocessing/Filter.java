@@ -1,15 +1,17 @@
 package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 
-import com.programvaruprojekt.springbatchtutorial.listener.LoggingChunkListener;
+import com.programvaruprojekt.springbatchtutorial.listener.JobCompletionNotificationListener;
 import com.programvaruprojekt.springbatchtutorial.model.*;
-import com.programvaruprojekt.springbatchtutorial.processors.FilterAccountItemProcessor;
-import com.programvaruprojekt.springbatchtutorial.processors.FilterPersonItemProcessor;
-import com.programvaruprojekt.springbatchtutorial.processors.FilterTransactionItemProcessor;
+import com.programvaruprojekt.springbatchtutorial.processors.separateFilter.FilterAccountItemProcessor;
+import com.programvaruprojekt.springbatchtutorial.processors.separateFilter.FilterPersonItemProcessor;
+import com.programvaruprojekt.springbatchtutorial.processors.separateFilter.FilterTransactionItemProcessor;
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.batch.core.ChunkListener;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -19,9 +21,7 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
@@ -35,12 +35,33 @@ public class Filter extends DefaultBatchConfiguration {
     @Autowired     //TODO: shouldn't work but does.. How to fix entityManagerFactory?
     private EntityManagerFactory entityManagerFactory;
 
-    @Bean
+/*    @Bean
     public ChunkListener loggingChunkListener() {
         return new LoggingChunkListener();
     }
 
-    @Bean
+ */
+
+
+
+    //@Bean
+    public Job filterJob(JobRepository jobRepository,
+                         JobCompletionNotificationListener listener,
+                         Step personFilterStep, Step transactionFilterStep, Step accountFilterStep) {
+        return new JobBuilder("filteringJob", jobRepository)
+                .repository(jobRepository)
+                .incrementer(new RunIdIncrementer())
+                .listener(listener)
+                .flow(personFilterStep)
+                .next(accountFilterStep)
+                .next(transactionFilterStep)
+                .end()
+                .build();
+    }
+
+
+
+    //@Bean
     public Step personFilterStep(JobRepository jobRepository,
                            PlatformTransactionManager transactionManager,
                            ItemWriter<RemovedPerson> removedPersonWriter) {
@@ -57,7 +78,8 @@ public class Filter extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
 
-    @Bean
+
+    //@Bean
     public Step accountFilterStep(JobRepository jobRepository,
                             PlatformTransactionManager transactionManager,
                                   ItemWriter<RemovedAccount> removedAccountWriter) {
@@ -74,7 +96,8 @@ public class Filter extends DefaultBatchConfiguration {
         return simpleStepBuilder.build();
     }
 
-    @Bean
+
+    //@Bean
     public Step transactionFilterStep(JobRepository jobRepository,
                                 PlatformTransactionManager transactionManager,
                                 ItemWriter<RemovedTransaction> removedTransactionWriter) {
@@ -92,7 +115,7 @@ public class Filter extends DefaultBatchConfiguration {
     }
 
     /* Reads from tables */
-    @Bean
+    //@Bean
     public JpaCursorItemReader<Person> personReaderFromDatabase() {
         return new JpaCursorItemReaderBuilder<Person>()
                 .name("personReaderFromDatabase")
@@ -100,7 +123,8 @@ public class Filter extends DefaultBatchConfiguration {
                 .queryString("SELECT p FROM Person p ORDER BY p.id ASC")
                 .build();
     }
-    @Bean
+
+    //@Bean
     public JpaCursorItemReader<Account> accountReaderFromDatabase() {
         return new JpaCursorItemReaderBuilder<Account>()
                 .name("accountReaderFromDatabase")
@@ -108,7 +132,7 @@ public class Filter extends DefaultBatchConfiguration {
                 .queryString("SELECT a FROM Account a ORDER BY a.id ASC")
                 .build();
     }
-    @Bean
+    //@Bean
     public JpaCursorItemReader<Transaction> transactionReaderFromDatabase() {
         return new JpaCursorItemReaderBuilder<Transaction>()
                 .name("transactionReaderFromDatabase")
@@ -118,33 +142,33 @@ public class Filter extends DefaultBatchConfiguration {
     }
 
     /* Filtering data */
-    @Bean
+    //@Bean
     public FilterPersonItemProcessor personFilterProcessor() {
         return new FilterPersonItemProcessor();
     }
-    @Bean
+    //@Bean
     public FilterTransactionItemProcessor transactionFilterProcessor() {
         return new FilterTransactionItemProcessor();
     }
-    @Bean
+    //@Bean
     public FilterAccountItemProcessor accountFilterProcessor() {
         return new FilterAccountItemProcessor();
     }
 
     /* Writes to Removed Tables */
-    @Bean
+    //@Bean
     public JpaItemWriter<RemovedPerson> removedPersonWriter(EntityManagerFactory entityManagerFactory) {
         JpaItemWriter<RemovedPerson> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(entityManagerFactory);
         return writer;
     }
-    @Bean
+    //@Bean
     public JpaItemWriter<RemovedAccount> removedAccountWriter(EntityManagerFactory entityManagerFactory) {
         JpaItemWriter<RemovedAccount> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(entityManagerFactory);
         return writer;
     }
-    @Bean
+    //@Bean
     public JpaItemWriter<RemovedTransaction> removedTransactionWriter(EntityManagerFactory entityManagerFactory) {
         JpaItemWriter<RemovedTransaction> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(entityManagerFactory);

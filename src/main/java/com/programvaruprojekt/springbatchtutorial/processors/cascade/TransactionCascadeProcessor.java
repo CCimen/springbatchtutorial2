@@ -1,8 +1,7 @@
-package com.programvaruprojekt.springbatchtutorial.processors;
+package com.programvaruprojekt.springbatchtutorial.processors.cascade;
 
 import com.programvaruprojekt.springbatchtutorial.model.RemovedTransaction;
 import com.programvaruprojekt.springbatchtutorial.model.Transaction;
-import com.programvaruprojekt.springbatchtutorial.repository.AccountRepository;
 import com.programvaruprojekt.springbatchtutorial.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +12,9 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class FilterTransactionItemProcessor implements ItemProcessor<Transaction, RemovedTransaction> {
-    private static final Logger log = LoggerFactory.getLogger(FilterTransactionItemProcessor.class);
+public class TransactionCascadeProcessor implements ItemProcessor<Transaction, RemovedTransaction> {
+    private static final Logger log = LoggerFactory.getLogger(TransactionCascadeProcessor.class);
 
-    @Autowired
-    private AccountRepository accountRepository;
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -28,9 +25,7 @@ public class FilterTransactionItemProcessor implements ItemProcessor<Transaction
         LocalDate transactionDate = transaction.getDate();
         long months = ChronoUnit.MONTHS.between(transactionDate, currentDate);
 
-          if ((months <= 18) &&
-                  (accountRepository.existsById((long) transaction.getSender())) &&
-                  (accountRepository.existsById((long) transaction.getReceiver()))
+          if ((months <= 18)
         ) {
             return null;
         }

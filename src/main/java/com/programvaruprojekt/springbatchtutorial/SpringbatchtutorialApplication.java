@@ -12,12 +12,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringbatchtutorialApplication implements CommandLineRunner {
 	//
 	private final JobLauncher jobLauncher;
-	private final Job filterJob;
+	//private final Job filterJob;
+	private final Job filterCascadeJob;
 	private final Job loadJob;
 
-	public SpringbatchtutorialApplication(JobLauncher jobLauncher, Job filterJob, Job loadJob) {
+	public SpringbatchtutorialApplication(JobLauncher jobLauncher, Job filterCascadeJob, Job loadJob /*, Job filterJob */) {
 		this.jobLauncher = jobLauncher;
-		this.filterJob = filterJob;
+	//	this.filterJob = filterJob;
+		this.filterCascadeJob = filterCascadeJob;
 		this.loadJob = loadJob;
 	}
 
@@ -27,8 +29,8 @@ public class SpringbatchtutorialApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		JobExecution loadJobExecution = jobLauncher.run(loadJob, new JobParameters());
 		System.out.println("Job Status: " + loadJobExecution.getStatus());
-		JobExecution filterJobExecution = jobLauncher.run(filterJob, new JobParameters());
-		System.out.println("Job Status: " + filterJobExecution.getStatus());
+		JobExecution filterCascadeJobExecution = jobLauncher.run(filterCascadeJob, new JobParameters());
+		System.out.println("Job Status: " + filterCascadeJobExecution.getStatus());
 
 	}
 }

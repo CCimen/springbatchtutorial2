@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.processors;
+package com.programvaruprojekt.springbatchtutorial.processors.separateFilter;
 
 import com.programvaruprojekt.springbatchtutorial.model.RemovedPerson;
 import com.programvaruprojekt.springbatchtutorial.repository.PersonRepository;
@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit;
 
 
 public class FilterPersonItemProcessor implements ItemProcessor<Person, RemovedPerson>{
-    private static final Logger log = LoggerFactory.getLogger(PersonItemProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(FilterPersonItemProcessor.class);
 
     @Autowired
     private PersonRepository personRepository;

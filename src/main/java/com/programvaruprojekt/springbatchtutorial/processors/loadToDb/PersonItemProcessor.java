@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.processors;
+package com.programvaruprojekt.springbatchtutorial.processors.loadToDb;
 
 import org.springframework.batch.item.ItemProcessor;
 import com.programvaruprojekt.springbatchtutorial.model.Person;

@@ -14,7 +14,6 @@ public class Person {
     @Id
     @Column(name = "id", unique = true, columnDefinition = "BIGINT", updatable = false)
     private long id;
-
     @Column(name = "first_name", nullable = false, columnDefinition = "TEXT")
     private String firstName;
     @Column(name = "last_name", nullable = false, columnDefinition = "TEXT")
