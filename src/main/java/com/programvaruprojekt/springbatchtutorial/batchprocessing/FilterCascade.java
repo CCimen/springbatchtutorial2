@@ -34,7 +34,7 @@ public class FilterCascade extends DefaultBatchConfiguration {
     @Value("100")
     private Integer chunkSize;
 
-    @Autowired     //TODO: shouldn't work but does.. How to fix entityManagerFactory?
+    @Autowired
     private EntityManagerFactory entityManagerFactory;
 
     @Bean
@@ -52,7 +52,7 @@ public class FilterCascade extends DefaultBatchConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .flow(transactionFilterCascadeStep)
-                //.next(personFilterCascadeStep)
+                .next(personFilterCascadeStep)
                 .end()
                 .build();
     }
