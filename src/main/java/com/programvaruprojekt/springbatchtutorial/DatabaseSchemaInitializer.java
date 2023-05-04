@@ -1,4 +1,4 @@
-package com.programvaruprojekt.springbatchtutorial.scheduler;
+package com.programvaruprojekt.springbatchtutorial;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +11,12 @@ import javax.sql.DataSource;
 
 
 @Configuration
-public class BatchSchemaInitializer {
+public class DatabaseSchemaInitializer {
 
     private final DataSource dataSource;
 
     @Autowired
-    public BatchSchemaInitializer(DataSource dataSource) {
+    public DatabaseSchemaInitializer(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

@@ -24,11 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
 @Configuration
-@EnableBatchProcessing
+@EnableScheduling
 public class FilterCascade extends DefaultBatchConfiguration {
 
     @Value("100")
@@ -48,6 +50,7 @@ public class FilterCascade extends DefaultBatchConfiguration {
                                 JobCompletionNotificationListener listener,
                                 Step personFilterCascadeStep, Step transactionFilterCascadeStep) {
         return new JobBuilder("filterCascadeJob", jobRepository)
+                //.preventRestart() //this Job does not support being started again. Restarting a Job that is not restartable causes a JobRestartException to be thrown.
                 .repository(jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
@@ -67,7 +70,7 @@ public class FilterCascade extends DefaultBatchConfiguration {
                 .reader(personReaderFromDatabase())
                 .processor(personCascadeProcessor())
                 .writer(removedPersonWriter)
-                // .listener(loggingChunkListener())
+                //.listener(loggingChunkListener())
                 ;
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
@@ -83,7 +86,7 @@ public class FilterCascade extends DefaultBatchConfiguration {
                 .reader(transactionReaderFromDatabase())
                 .processor(transactionFilterProcessor())
                 .writer(removedTransactionWriter)
-                //   .listener(loggingChunkListener())
+                //.listener(loggingChunkListener())
                 ;
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();

@@ -33,7 +33,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 @Configuration
-@EnableBatchProcessing
 public class FlatFileToDB extends DefaultBatchConfiguration {
 
     public static final String PERSONS_FILE_PATH = "persons_1k.csv";
