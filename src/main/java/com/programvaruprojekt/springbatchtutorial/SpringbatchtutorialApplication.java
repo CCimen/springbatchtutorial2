@@ -1,9 +1,6 @@
 package com.programvaruprojekt.springbatchtutorial;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -13,6 +10,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @SpringBootApplication
 @EnableScheduling
@@ -39,17 +39,30 @@ public class SpringbatchtutorialApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		JobExecution loadJobExecution = jobLauncher.run(loadJob, new JobParameters());
 		System.out.println("Job Status: " + loadJobExecution.getStatus());
+
+		JobExecution filterCascadeJobExecution = jobLauncher.run(filterCascadeJob, new JobParameters()); // incrementer.getNext(new JobParameters()));
+		System.out.println("Job Status: " + filterCascadeJobExecution.getStatus());
 	}
 
 	/**
 	 * Scheduled start of batch job "FilterCascade"
 	 * @throws Exception
 	 */
-	@Scheduled (fixedDelay = 10000, initialDelay = 10000)
-	//(cron = "0 0 16 * * *")  //För cron-uttryck: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
+/*
+	@Scheduled
+			//(cron = "0 04 11 * * *")  //Cron expressions: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
+			(fixedDelay = 100000, initialDelay = 10000)
 	public void runFilter() throws Exception {
-		JobExecution filterCascadeJobExecution = jobLauncher.run(filterCascadeJob, new JobParameters());
+		JobExecution filterCascadeJobExecution = jobLauncher.run(filterCascadeJob, new JobParameters()); // incrementer.getNext(new JobParameters()));
 		System.out.println("Job Status: " + filterCascadeJobExecution.getStatus());
 	}
+
+	JobParametersIncrementer incrementer = parameters -> new JobParametersBuilder(parameters)
+			.addString("time.id", LocalDateTime.now().toString())
+			.toJobParameters();
+
+
+ */
+
 
 }

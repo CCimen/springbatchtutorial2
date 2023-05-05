@@ -40,17 +40,12 @@ public class FilterCascade extends DefaultBatchConfiguration {
     private EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public ChunkListener loggingChunkListener() {
-        return new LoggingChunkListener();
-    }
-
-
-    @Bean
     public Job filterCascadeJob(JobRepository jobRepository,
                                 JobCompletionNotificationListener listener,
-                                Step personFilterCascadeStep, Step transactionFilterCascadeStep) {
+                                Step personFilterCascadeStep,
+                                Step transactionFilterCascadeStep) {
         return new JobBuilder("filterCascadeJob", jobRepository)
-                //.preventRestart() //this Job does not support being started again. Restarting a Job that is not restartable causes a JobRestartException to be thrown.
+                //.preventRestart() //if used: this Job does not support being started again. Restarting a Job that is not restartable causes a JobRestartException to be thrown.
                 .repository(jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
@@ -63,14 +58,15 @@ public class FilterCascade extends DefaultBatchConfiguration {
     @Bean
     public Step personFilterCascadeStep(JobRepository jobRepository,
                                         PlatformTransactionManager transactionManager,
-                                        ItemWriter<RemovedPerson> removedPersonWriter) {
+                                        ItemWriter<RemovedPerson> removedPersonWriter,
+                                        LoggingChunkListener chunkListener) {
         StepBuilder stepBuilder = new StepBuilder("personFilterCascadeStep", jobRepository);
         SimpleStepBuilder<Person, RemovedPerson> simpleStepBuilder = stepBuilder
                 .<Person, RemovedPerson>chunk(chunkSize, transactionManager)
                 .reader(personReaderFromDatabase())
                 .processor(personCascadeProcessor())
                 .writer(removedPersonWriter)
-                //.listener(loggingChunkListener())
+                //.listener(chunkListener)
                 ;
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
@@ -79,14 +75,15 @@ public class FilterCascade extends DefaultBatchConfiguration {
     @Bean
     public Step transactionFilterCascadeStep(JobRepository jobRepository,
                                       PlatformTransactionManager transactionManager,
-                                      ItemWriter<RemovedTransaction> removedTransactionWriter) {
+                                      ItemWriter<RemovedTransaction> removedTransactionWriter,
+                                             LoggingChunkListener chunkListener) {
         StepBuilder stepBuilder = new StepBuilder("transactionFilterCascadeStep", jobRepository);
         SimpleStepBuilder<Transaction, RemovedTransaction> simpleStepBuilder = stepBuilder
                 .<Transaction, RemovedTransaction>chunk(chunkSize, transactionManager)
                 .reader(transactionReaderFromDatabase())
                 .processor(transactionFilterProcessor())
                 .writer(removedTransactionWriter)
-                //.listener(loggingChunkListener())
+                //.listener(chunkListener)
                 ;
         simpleStepBuilder.transactionManager(transactionManager);
         return simpleStepBuilder.build();
