@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-
+/*
+ * Transaction processor. Not in use
+ */
 public class TransactionItemProcessor implements ItemProcessor<Transaction, Transaction> {
 
     @Autowired
@@ -25,12 +27,9 @@ public class TransactionItemProcessor implements ItemProcessor<Transaction, Tran
                   (!accountRepository.existsById((long) transaction.getSender())) ||
                   (!accountRepository.existsById((long) transaction.getReceiver()))
         ) {
-
-            //TODO add logic to use another storage
             return null;
         }
         else {
-            //Writes to DB
             return transaction;
         }
 

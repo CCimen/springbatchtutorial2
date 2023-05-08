@@ -33,7 +33,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableScheduling
 public class FilterCascade extends DefaultBatchConfiguration {
 
-    @Value("100")
+    @Value("1000")
     private Integer chunkSize;
 
     @Autowired

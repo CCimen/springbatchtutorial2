@@ -35,9 +35,9 @@ import java.util.Collections;
 @Configuration
 public class FlatFileToDB extends DefaultBatchConfiguration {
 
-    public static final String PERSONS_FILE_PATH = "persons_10k.csv";
-    public static final String ACCOUNTS_FILE_PATH = "accounts_20k.csv";
-    public static final String TRANSACTIONS_FILE_PATH = "transactions_100k.csv";
+    public static final String PERSONS_FILE_PATH = "persons_100k.csv";
+    public static final String ACCOUNTS_FILE_PATH = "accounts_200k.csv";
+    public static final String TRANSACTIONS_FILE_PATH = "transactions_1m.csv";
 
     @Value("100")
     private Integer chunkSize;

@@ -33,8 +33,8 @@ public class PersonCascadeProcessor implements ItemProcessor<Person, RemovedPers
     public RemovedPerson process(final Person person) {
 
         LocalDate currentDate = LocalDate.now();
-        LocalDate dob = person.getDOB();
-        long years = ChronoUnit.YEARS.between(dob, currentDate);
+        LocalDate dateOfBirth = person.getDateOfBirth();
+        long years = ChronoUnit.YEARS.between(dateOfBirth, currentDate);
 
         if (years >= 18) {
             return null;
@@ -61,7 +61,7 @@ public class PersonCascadeProcessor implements ItemProcessor<Person, RemovedPers
                 accountRepository.delete(account);
             }
 
-            RemovedPerson personToRemove = new RemovedPerson(person.getId(), person.getFirstName(), person.getLastName(), person.getDOB());
+            RemovedPerson personToRemove = new RemovedPerson(person.getId(), person.getFirstName(), person.getLastName(), person.getDateOfBirth());
             personRepository.delete(person);
 
             return personToRemove;

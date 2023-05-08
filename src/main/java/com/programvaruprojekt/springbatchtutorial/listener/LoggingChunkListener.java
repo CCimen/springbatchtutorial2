@@ -16,15 +16,13 @@ public class LoggingChunkListener implements ChunkListener {
     public void beforeChunk(ChunkContext context) {
         LOGGER.info("Starting chunk: {}", context.getStepContext().getStepName());
     }
-
+/*
     @Override
     public void afterChunk(ChunkContext context) {
         LOGGER.info("Finished chunk: {}", context.getStepContext().getStepName());
     }
 
-    @Override
-    public void afterChunkError(ChunkContext context) {
-        LOGGER.error("Error in chunk: {}", context.getStepContext().getStepName());
-    }
+ */
+
 
 }

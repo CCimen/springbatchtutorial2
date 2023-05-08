@@ -20,14 +20,14 @@ public class RemovedPerson {
     private String firstName;
     @Column(name = "last_name", nullable = false, columnDefinition = "TEXT")
     private String lastName;
-    @Column(name = "DOB", nullable = false, columnDefinition = "DATE")
-    private LocalDate DOB;
+    @Column(name = "date_of_birth", nullable = false, columnDefinition = "DATE")
+    private LocalDate dateOfBirth;
 
-    public RemovedPerson(long id, String firstName, String lastName, LocalDate DOB) {
+    public RemovedPerson(long id, String firstName, String lastName, LocalDate dateOfBirth) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.DOB = DOB;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public RemovedPerson() {
@@ -40,7 +40,7 @@ public class RemovedPerson {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", DOB=" + DOB +
+                ", DOB=" + dateOfBirth +
                 '}';
     }
 }
