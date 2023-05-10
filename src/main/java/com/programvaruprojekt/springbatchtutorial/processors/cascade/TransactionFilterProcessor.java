@@ -12,8 +12,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 
-public class TransactionCascadeProcessor implements ItemProcessor<Transaction, RemovedTransaction> {
-    private static final Logger log = LoggerFactory.getLogger(TransactionCascadeProcessor.class);
+public class TransactionFilterProcessor implements ItemProcessor<Transaction, RemovedTransaction> {
+    private static final Logger log = LoggerFactory.getLogger(TransactionFilterProcessor.class);
 
     @Autowired
     private TransactionRepository transactionRepository;

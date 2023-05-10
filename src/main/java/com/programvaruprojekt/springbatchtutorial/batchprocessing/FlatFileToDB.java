@@ -35,9 +35,9 @@ import java.util.Collections;
 @Configuration
 public class FlatFileToDB extends DefaultBatchConfiguration {
 
-    public static final String PERSONS_FILE_PATH = "persons_100k.csv";
-    public static final String ACCOUNTS_FILE_PATH = "accounts_200k.csv";
-    public static final String TRANSACTIONS_FILE_PATH = "transactions_1m.csv";
+    public static final String PERSONS_FILE_PATH = "persons_1k.csv";
+    public static final String ACCOUNTS_FILE_PATH = "accounts_2k.csv";
+    public static final String TRANSACTIONS_FILE_PATH = "transactions_10k.csv";
 
     @Value("100")
     private Integer chunkSize;
@@ -104,7 +104,7 @@ public class FlatFileToDB extends DefaultBatchConfiguration {
         reader.setResource(new ClassPathResource(PERSONS_FILE_PATH));
         reader.setLineMapper(new DefaultLineMapper<>() {{
             setLineTokenizer(new DelimitedLineTokenizer(",") {{
-                setNames("id", "first_name", "last_name", "DOB");
+                setNames("id", "first_name", "last_name", "date_of_birth");
                 setQuoteCharacter('\'');
             }});
             setFieldSetMapper(new BeanWrapperFieldSetMapper<>() {{

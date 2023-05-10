@@ -2,28 +2,21 @@ package com.programvaruprojekt.springbatchtutorial;
 
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @SpringBootApplication
 @EnableScheduling
 public class SpringbatchtutorialApplication implements CommandLineRunner {
 	private final JobLauncher jobLauncher;
-	private final Job filterCascadeJob;
+	private final Job filterJob;
 	private final Job loadJob;
 
-	public SpringbatchtutorialApplication(JobLauncher jobLauncher, Job filterCascadeJob, Job loadJob) {
+	public SpringbatchtutorialApplication(JobLauncher jobLauncher, Job filterJob, Job loadJob) {
 		this.jobLauncher = jobLauncher;
-		this.filterCascadeJob = filterCascadeJob;
+		this.filterJob = filterJob;
 		this.loadJob = loadJob;
 	}
 
@@ -40,8 +33,8 @@ public class SpringbatchtutorialApplication implements CommandLineRunner {
 		JobExecution loadJobExecution = jobLauncher.run(loadJob, new JobParameters());
 		System.out.println("Job Status: " + loadJobExecution.getStatus());
 
-		JobExecution filterCascadeJobExecution = jobLauncher.run(filterCascadeJob, new JobParameters()); // incrementer.getNext(new JobParameters()));
-		System.out.println("Job Status: " + filterCascadeJobExecution.getStatus());
+		JobExecution filterJobExecution = jobLauncher.run(filterJob, new JobParameters()); // incrementer.getNext(new JobParameters()));
+		System.out.println("Job Status: " + filterJobExecution.getStatus());
 	}
 
 	/**

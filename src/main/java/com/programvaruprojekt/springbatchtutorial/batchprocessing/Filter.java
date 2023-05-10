@@ -3,13 +3,11 @@ package com.programvaruprojekt.springbatchtutorial.batchprocessing;
 import com.programvaruprojekt.springbatchtutorial.listener.JobCompletionNotificationListener;
 import com.programvaruprojekt.springbatchtutorial.listener.LoggingChunkListener;
 import com.programvaruprojekt.springbatchtutorial.model.*;
-import com.programvaruprojekt.springbatchtutorial.processors.cascade.PersonCascadeProcessor;
-import com.programvaruprojekt.springbatchtutorial.processors.cascade.TransactionCascadeProcessor;
+import com.programvaruprojekt.springbatchtutorial.processors.cascade.PersonFilterProcessor;
+import com.programvaruprojekt.springbatchtutorial.processors.cascade.TransactionFilterProcessor;
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -25,13 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
 @Configuration
 @EnableScheduling
-public class FilterCascade extends DefaultBatchConfiguration {
+public class Filter extends DefaultBatchConfiguration {
 
     @Value("1000")
     private Integer chunkSize;
@@ -40,31 +37,31 @@ public class FilterCascade extends DefaultBatchConfiguration {
     private EntityManagerFactory entityManagerFactory;
 
     @Bean
-    public Job filterCascadeJob(JobRepository jobRepository,
-                                JobCompletionNotificationListener listener,
-                                Step personFilterCascadeStep,
-                                Step transactionFilterCascadeStep) {
-        return new JobBuilder("filterCascadeJob", jobRepository)
+    public Job filterJob(JobRepository jobRepository,
+                         JobCompletionNotificationListener listener,
+                         Step personFilterStep,
+                         Step transactionFilterStep) {
+        return new JobBuilder("filterJob", jobRepository)
                 //.preventRestart() //if used: this Job does not support being started again. Restarting a Job that is not restartable causes a JobRestartException to be thrown.
                 .repository(jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(transactionFilterCascadeStep)
-                .next(personFilterCascadeStep)
+                .flow(transactionFilterStep)
+                .next(personFilterStep)
                 .end()
                 .build();
     }
 
     @Bean
-    public Step personFilterCascadeStep(JobRepository jobRepository,
-                                        PlatformTransactionManager transactionManager,
-                                        ItemWriter<RemovedPerson> removedPersonWriter,
-                                        LoggingChunkListener chunkListener) {
-        StepBuilder stepBuilder = new StepBuilder("personFilterCascadeStep", jobRepository);
+    public Step personFilterStep(JobRepository jobRepository,
+                                 PlatformTransactionManager transactionManager,
+                                 ItemWriter<RemovedPerson> removedPersonWriter,
+                                 LoggingChunkListener chunkListener) {
+        StepBuilder stepBuilder = new StepBuilder("personFilterStep", jobRepository);
         SimpleStepBuilder<Person, RemovedPerson> simpleStepBuilder = stepBuilder
                 .<Person, RemovedPerson>chunk(chunkSize, transactionManager)
                 .reader(personReaderFromDatabase())
-                .processor(personCascadeProcessor())
+                .processor(personFilterProcessor())
                 .writer(removedPersonWriter)
                 //.listener(chunkListener)
                 ;
@@ -73,11 +70,11 @@ public class FilterCascade extends DefaultBatchConfiguration {
     }
 
     @Bean
-    public Step transactionFilterCascadeStep(JobRepository jobRepository,
-                                      PlatformTransactionManager transactionManager,
-                                      ItemWriter<RemovedTransaction> removedTransactionWriter,
-                                             LoggingChunkListener chunkListener) {
-        StepBuilder stepBuilder = new StepBuilder("transactionFilterCascadeStep", jobRepository);
+    protected Step transactionFilterStep(JobRepository jobRepository,
+                                         PlatformTransactionManager transactionManager,
+                                         ItemWriter<RemovedTransaction> removedTransactionWriter,
+                                         LoggingChunkListener chunkListener) {
+        StepBuilder stepBuilder = new StepBuilder("transactionFilterStep", jobRepository);
         SimpleStepBuilder<Transaction, RemovedTransaction> simpleStepBuilder = stepBuilder
                 .<Transaction, RemovedTransaction>chunk(chunkSize, transactionManager)
                 .reader(transactionReaderFromDatabase())
@@ -109,12 +106,12 @@ public class FilterCascade extends DefaultBatchConfiguration {
 
     /* Filtering data */
     @Bean
-    public PersonCascadeProcessor personCascadeProcessor() {
-        return new PersonCascadeProcessor();
+    public PersonFilterProcessor personFilterProcessor() {
+        return new PersonFilterProcessor();
     }
     @Bean
-    public TransactionCascadeProcessor transactionFilterProcessor() {
-        return new TransactionCascadeProcessor();
+    public TransactionFilterProcessor transactionFilterProcessor() {
+        return new TransactionFilterProcessor();
     }
 
 

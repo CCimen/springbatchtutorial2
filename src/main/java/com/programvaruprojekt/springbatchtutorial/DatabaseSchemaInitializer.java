@@ -19,7 +19,6 @@ public class DatabaseSchemaInitializer {
     public DatabaseSchemaInitializer(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
     @PostConstruct
     public void initializeSchema() {
         Resource schemaResource = new ClassPathResource("org/springframework/batch/core/schema-h2.sql");

@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class PersonCascadeProcessor implements ItemProcessor<Person, RemovedPerson>{
-    private static final Logger log = LoggerFactory.getLogger(PersonCascadeProcessor.class);
+public class PersonFilterProcessor implements ItemProcessor<Person, RemovedPerson>{
+    private static final Logger log = LoggerFactory.getLogger(PersonFilterProcessor.class);
 
     @Autowired
     private PersonRepository personRepository;
